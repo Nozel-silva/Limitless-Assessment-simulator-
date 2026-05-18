@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PrecisionTest — Assessment Practice Platform</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Precision<span>Test</span></div>
+  <button class="nav-btn" onclick="openModal()">Get Started</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">🎯 Nigeria's #1 Aptitude Practice Platform</div>
+    <h1>Sharpen Your Mind.<br/>Ace Your <span>Assessment</span>.</h1>
+    <p>Practice real aptitude, numerical, and reasoning questions under timed, exam-like conditions. Built for job seekers and candidates who want to walk in prepared — not nervous.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="openModal()">Start Practising Free</button>
+      <button class="btn-outline" onclick="document.querySelector('.section').scrollIntoView({behavior:'smooth'})">Learn More</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Questions</span></div>
+      <div class="stat"><span class="stat-num">3</span><span class="stat-label">Test Modes</span></div>
+      <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Retakes</span></div>
+      <div class="stat"><span class="stat-num">Free</span><span class="stat-label">Always</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-tag">Why PrecisionTest</div>
+    <h2>Everything You Need to Practice Smart</h2>
+    <p class="section-sub">Designed specifically for applicants facing aptitude and numerical reasoning assessments in job selection processes.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon icon-red">⏱️</div>
+        <h3>Real Exam Timer</h3>
+        <p>Practice under the exact same time pressure you'll face on test day. The countdown runs, auto-submits when time is up — just like the real thing.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-blue">📋</div>
+        <h3>3 Test Formats</h3>
+        <p>Choose from 25, 30, or 50 question sessions with time limits matching real-world assessments — from quick drills to full-length simulations.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-gold">🔁</div>
+        <h3>Unlimited Retakes</h3>
+        <p>No limits, no gates. Retake any test as many times as you like until you feel confident. Every attempt helps you improve your speed and accuracy.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-green">📊</div>
+        <h3>Instant Results</h3>
+        <p>Get your score immediately after each test. See exactly which questions you got right or wrong so you know where to focus your energy.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-purple">🧠</div>
+        <h3>Question-by-Question Flow</h3>
+        <p>Questions appear one at a time — just like real assessment platforms. No scrolling, no distractions. Stay focused and answer with intention.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-teal">🔐</div>
+        <h3>Email-Based Access</h3>
+        <p>Sign in with just your email. No passwords, no forms. Your account is created instantly and you go straight to practising.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="section-inner">
+    <div class="section-tag">How It Works</div>
+    <h2>Up and Running in 60 Seconds</h2>
+    <p class="section-sub">No stress, no setup. Just practice.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Enter Your Email</h3>
+        <p>Type your email address to create a free account or log back in — no password needed.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Choose Your Test</h3>
+        <p>Select how many questions and how much time. Pick the format that matches your target exam.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Answer & Focus</h3>
+        <p>Questions come one at a time. Read carefully, pick your answer, move forward. The clock is ticking.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>See Your Score</h3>
+        <p>Instantly see your result, review wrong answers, and retake as many times as it takes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Ready to Beat the Test?</h2>
+  <p>Join hundreds of applicants already practising smart with PrecisionTest.</p>
+  <button class="btn-white" onclick="openModal()">Start Free — No Password Needed</button>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 <span>PrecisionTest</span> — Built for Nigerian job seekers. Practice hard. Pass with confidence.</p>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2>Welcome 👋</h2>
+    <p class="sub">Enter your email to begin. New users are registered automatically.</p>
+    <div class="status-msg" id="statusMsg"></div>
+    <div class="form-group">
+      <label for="emailInput">Email Address</label>
+      <input type="email" id="emailInput" placeholder="you@example.com"
+             oninput="clearError()" onkeydown="handleEnter(event)" />
+      <div class="error-msg" id="emailError">Please enter a valid email address.</div>
+    </div>
+    <button class="modal-submit" id="submitBtn" onclick="handleAuth()">Continue to Practice →</button>
+    <p class="modal-note">No password required. No spam. Just practice.</p>
+  </div>
+</div>
+
+<script src="index.js"></script>
+</body>
+    </html>

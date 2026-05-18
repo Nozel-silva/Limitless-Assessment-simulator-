@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload Test — PrecisionTest</title>
+  <link rel="stylesheet" href="upload.css" />
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">Precision<span>Test</span></div>
+  <div class="topbar-right">
+    <a href="index.html" class="back-link">← Back to Home</a>
+  </div>
+</div>
+
+<!-- SCREEN 1: UPLOAD -->
+<div class="screen active" id="uploadScreen">
+  <div class="upload-wrap">
+
+    <div class="upload-header">
+      <div class="upload-badge">📂 Custom Test</div>
+      <h1>Upload Your Question File</h1>
+      <p>Upload a <strong>.docx</strong> file containing your questions and we'll turn it into a live timed test instantly.</p>
+    </div>
+
+    <!-- DROP ZONE -->
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-icon">📄</div>
+      <div class="drop-title">Drag & drop your .docx file here</div>
+      <div class="drop-sub">or</div>
+      <label class="file-label" for="fileInput">Browse File</label>
+      <input type="file" id="fileInput" accept=".docx" hidden />
+      <div class="drop-hint">Only .docx files are supported</div>
+    </div>
+
+    <!-- FILE PREVIEW (hidden until file picked) -->
+    <div class="file-preview" id="filePreview">
+      <div class="file-icon">📝</div>
+      <div class="file-info">
+        <div class="file-name" id="fileName">—</div>
+        <div class="file-meta" id="fileMeta">—</div>
+      </div>
+      <button class="file-remove" onclick="removeFile()">✕</button>
+    </div>
+
+    <!-- TIMER SETTING -->
+    <div class="timer-setting" id="timerSetting">
+      <label for="timerInput">⏱ Set your timer</label>
+      <div class="timer-row">
+        <button class="timer-adj" onclick="adjustTimer(-5)">−5</button>
+        <div class="timer-display-box">
+          <input type="number" id="timerInput" value="30" min="1" max="180" />
+          <span>minutes</span>
+        </div>
+        <button class="timer-adj" onclick="adjustTimer(5)">+5</button>
+      </div>
+      <div class="timer-presets">
+        <button onclick="setTimer(10)">10 min</button>
+        <button onclick="setTimer(12)">12 min</button>
+        <button onclick="setTimer(20)">20 min</button>
+        <button onclick="setTimer(30)">30 min</button>
+        <button onclick="setTimer(45)">45 min</button>
+        <button onclick="setTimer(60)">60 min</button>
+      </div>
+    </div>
+
+    <!-- PARSE ERROR -->
+    <div class="parse-error" id="parseError"></div>
+
+    <!-- START BTN -->
+    <button class="start-btn" id="startBtn" onclick="beginTest()" disabled>
+      Upload a file to begin
+    </button>
+
+    <!-- FORMAT GUIDE -->
+    <div class="format-guide">
+      <div class="guide-toggle" onclick="toggleGuide()">
+        📋 How to format your Word document <span id="guideArrow">▼</span>
+      </div>
+      <div class="guide-body" id="guideBody">
+        <p>Your <strong>.docx</strong> file must follow this exact structure for each question:</p>
+        <div class="guide-example">
+1. What is 5 + 5?
+A. 8
+B. 10
+C. 12
+D. 15
+Answer: B
+
+2. Which planet is closest to the sun?
+A. Earth
+B. Venus
+C. Mercury
+D. Mars
+Answer: C
+        </div>
+        <ul class="guide-rules">
+          <li>Start each question with a <strong>number and a dot</strong> — e.g. <code>1.</code> <code>2.</code></li>
+          <li>Options must be <strong>A. B. C. D.</strong> (capital letter + dot)</li>
+          <li>The answer line must be <strong>Answer: X</strong> where X is A, B, C, or D</li>
+          <li>Leave a <strong>blank line</strong> between each question block</li>
+          <li>You can have as many questions as you like</li>
+          <li>The answer line is optional — if omitted, scoring is skipped for that question</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SCREEN 2: TEST -->
+<div class="screen" id="testScreen">
+  <div class="test-wrap">
+    <div class="test-header">
+      <div class="progress-info">
+        Question <strong id="qCurrent">1</strong> of <strong id="qTotal">—</strong>
+      </div>
+      <div class="timer-box" id="timerBox">⏱ <span id="timerDisplay">00:00</span></div>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+    </div>
+
+    <div class="q-card" id="qCard">
+      <div class="q-num" id="qNum">Question 1</div>
+      <div class="q-text" id="qText">Loading...</div>
+      <div class="options" id="optionsContainer"></div>
+      <div class="q-footer">
+        <button class="skip-btn" onclick="skipQuestion()">Skip this question</button>
+        <div class="q-footer-right">
+          <button class="submit-test-btn" onclick="confirmSubmit()">Submit Test</button>
+          <button class="next-btn" id="nextBtn" onclick="nextQuestion()" disabled>Next →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: RESULTS -->
+<div class="screen" id="resultsScreen">
+  <div class="results-wrap">
+    <div class="result-hero">
+      <div class="result-emoji" id="resultEmoji">🎉</div>
+      <h2 id="resultTitle">Test Complete!</h2>
+      <p id="resultSub">Here's how you did</p>
+
+      <div class="score-ring" id="scoreRing">
+        <div id="scoreNum">—</div>
+        <div class="score-pct" id="scorePct">—</div>
+      </div>
+
+      <div class="result-stats">
+        <div class="r-stat correct"><div class="r-stat-num" id="rCorrect">0</div><div class="r-stat-label">Correct</div></div>
+        <div class="r-stat wrong"><div class="r-stat-num" id="rWrong">0</div><div class="r-stat-label">Wrong</div></div>
+        <div class="r-stat skipped"><div class="r-stat-num" id="rSkipped">0</div><div class="r-stat-label">Skipped</div></div>
+        <div class="r-stat"><div class="r-stat-num" id="rTime">—</div><div class="r-stat-label">Time Used</div></div>
+      </div>
+
+      <div class="no-answer-note" id="noAnswerNote"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="retake-btn" onclick="retakeTest()">🔁 Retake This Test</button>
+      <button class="change-mode-btn" onclick="goToUpload()">📂 Upload New File</button>
+    </div>
+
+    <div class="review-section">
+      <h3>📋 Question Review</h3>
+      <div id="reviewList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- mammoth.js for reading .docx files -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="upload.js"></script>
+</body>
+</html>

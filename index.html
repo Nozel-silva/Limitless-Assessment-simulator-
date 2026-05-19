@@ -5,13 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PrecisionTest — Assessment Practice Platform</title>
   <link rel="stylesheet" href="index.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
   <div class="logo">Precision<span>Test</span></div>
-  <button class="nav-btn" onclick="openModal()">Get Started</button>
+  <div class="nav-right">
+    <div class="profile-chip" id="profileChip" style="display:none">
+      <span class="profile-dot"></span>
+      <span class="profile-email" id="profileEmail"></span>
+      <span class="session-timer" id="sessionTimer"></span>
+      <button class="profile-logout" onclick="logout()">Sign Out</button>
+    </div>
+    <button class="nav-btn" id="navGetStarted" onclick="openModal()">Get Started</button>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -105,6 +114,23 @@
   </div>
 </section>
 
+<!-- BOOK PROMO -->
+<section class="book-section">
+  <div class="book-inner">
+    <div class="book-badge">📘 Exclusive Guide</div>
+    <h2>Want to Pass Every Assessment <span>Swiftly?</span></h2>
+    <p>Our expert guide reveals proven strategies, time management techniques, and mental frameworks used by top scorers. Stop guessing — start winning.</p>
+    <ul class="book-points">
+      <li>⚡ Speed techniques to answer faster without losing accuracy</li>
+      <li>🎯 Pattern recognition for every question type</li>
+      <li>🧠 Elimination strategies that work every time</li>
+      <li>⏱ How to manage time across different test formats</li>
+      <li>📈 A proven study plan to go from average to top scorer</li>
+    </ul>
+    <a href="book.html" class="book-btn">Get the Guide →</a>
+  </div>
+</section>
+
 <!-- CTA -->
 <section class="cta-section">
   <h2>Ready to Beat the Test?</h2>
@@ -114,6 +140,13 @@
 
 <!-- FOOTER -->
 <footer>
+  <div class="footer-links">
+    <a href="privacy.html">Privacy Policy</a>
+    <span>·</span>
+    <a href="terms.html">Terms of Use</a>
+    <span>·</span>
+    <a href="book.html">Assessment Guide</a>
+  </div>
   <p>© 2025 <span>PrecisionTest</span> — Built for Nigerian job seekers. Practice hard. Pass with confidence.</p>
 </footer>
 
@@ -131,7 +164,12 @@
       <div class="error-msg" id="emailError">Please enter a valid email address.</div>
     </div>
     <button class="modal-submit" id="submitBtn" onclick="handleAuth()">Continue to Practice →</button>
-    <p class="modal-note">No password required. No spam. Just practice.</p>
+    <p class="modal-note">
+      By continuing, you agree to our
+      <a href="privacy.html" target="_blank">Privacy Policy</a> and
+      <a href="terms.html" target="_blank">Terms of Use</a>.
+      No spam. No passwords.
+    </p>
   </div>
 </div>
 

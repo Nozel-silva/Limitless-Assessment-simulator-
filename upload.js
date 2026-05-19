@@ -22,11 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── Drop zone ──
 function setupDropZone() {
   const zone = document.getElementById('dropZone');
-
-  zone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    zone.classList.add('dragover');
-  });
+  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
   zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
   zone.addEventListener('drop', (e) => {
     e.preventDefault();
@@ -42,33 +38,26 @@ function handleFileSelect(e) {
   if (file) processFile(file);
 }
 
-// ── Process file — extract text then send to Claude ──
+// ── Process file ──
 async function processFile(file) {
   clearError();
 
-  if (!file.name.match(/\.(docx|doc|txt|pdf)$/i)) {
-    showError('❌ Please upload a Word (.docx/.doc), plain text (.txt), or PDF (.pdf) file.');
+  if (!file.name.match(/\.(docx|doc|txt)$/i)) {
+    showError('❌ Please upload a Word (.docx / .doc) or plain text (.txt) file.');
     return;
   }
 
-  // Show loading state on drop zone
   showLoadingState('📄 Reading file...');
 
   try {
     let rawText = '';
 
     if (file.name.match(/\.(docx|doc)$/i)) {
-      // Use mammoth for Word docs
       const arrayBuffer = await file.arrayBuffer();
       const result      = await mammoth.extractRawText({ arrayBuffer });
       rawText           = result.value;
-    } else if (file.name.match(/\.txt$/i)) {
-      // Plain text — read directly
+    } else {
       rawText = await file.text();
-    } else if (file.name.match(/\.pdf$/i)) {
-      showError('❌ PDF parsing is not supported in browser mode. Please use a .docx or .txt file.');
-      resetLoadingState();
-      return;
     }
 
     if (!rawText.trim()) {
@@ -77,95 +66,153 @@ async function processFile(file) {
       return;
     }
 
-    // Send to Claude for parsing
-    showLoadingState('🤖 AI is reading your questions...');
-    const questions = await parseWithClaude(rawText);
+    showLoadingState('🔍 Scanning for questions...');
+
+    // Small delay so the UI updates before heavy parsing
+    await new Promise(r => setTimeout(r, 50));
+
+    const questions = parseQuestions(rawText);
 
     if (!questions || questions.length === 0) {
-      showError('❌ No questions could be found in this file. Make sure it contains questions with answer options.');
+      showError(
+        '❌ No questions could be found. Make sure your file has questions with A B C D options. ' +
+        'Open the format guide below for examples.'
+      );
       resetLoadingState();
       return;
     }
 
     parsedQuestions = questions;
 
-    // Show file preview
     document.getElementById('filePreview').classList.add('visible');
     document.getElementById('fileName').textContent = file.name;
     document.getElementById('fileMeta').textContent =
       `${questions.length} question${questions.length !== 1 ? 's' : ''} found  •  ${(file.size / 1024).toFixed(1)} KB`;
 
-    // Show timer
     document.getElementById('timerSetting').classList.add('visible');
     resetLoadingState();
     updateStartBtn();
 
   } catch (err) {
-    console.error(err);
-    showError('❌ Something went wrong while processing the file. Please try again.');
+    console.error('Processing error:', err);
+    showError('❌ Something went wrong reading the file. Please try again.');
     resetLoadingState();
   }
 }
 
-// ── Claude API parser ──
-async function parseWithClaude(rawText) {
-  const prompt = `You are a question parser. I will give you raw text extracted from a document. 
-Your job is to find ALL the questions and their answer options inside it, no matter the format or layout.
+// ── Smart Question Parser ──
+function parseQuestions(raw) {
+  const questions = [];
 
-The text may be messy, inconsistently formatted, use different numbering styles, bullet points, letters, numbers, or no markers at all. 
-You must figure it out intelligently.
+  // Normalise: unify line endings, remove carriage returns
+  let text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
-Return ONLY a valid JSON array, nothing else — no explanation, no markdown, no code fences.
-
-Each item in the array must follow this exact shape:
-{
-  "question": "The question text here",
-  "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
-  "answer": 1
-}
-
-Rules:
-- "options" is an array of strings (the answer choices). Include all options found, minimum 2.
-- "answer" is the zero-based INDEX of the correct option (0 = first option, 1 = second, etc.)
-- If no correct answer is indicated in the text, set "answer" to null
-- Clean up any numbering or lettering from the option text itself (e.g. "A. Lagos" becomes "Lagos")
-- Do not include any text that is not a question or option (instructions, headings, page numbers, etc.)
-- If the document has no recognisable questions at all, return an empty array: []
-
-Here is the raw text:
----
-${rawText.slice(0, 12000)}
----`;
-
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model:      'claude-sonnet-4-20250514',
-      max_tokens: 4000,
-      messages:   [{ role: 'user', content: prompt }]
-    })
+  // Remove common junk lines (page numbers, headers)
+  text = text.replace(/^\s*page\s*\d+\s*$/gim, '');
+  text = text.replace(/^\s*\d+\s*$/gm, match => {
+    // Keep lone numbers only if they look like question numbers (short line)
+    return match.trim().length <= 3 ? match : '';
   });
 
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err?.error?.message || 'Claude API error');
+  // Split into lines and clean
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // ── Detect a question line ──
+    // Matches: "1. Question", "1) Question", "Q1. Question", "Q1) Question",
+    //          "Question 1. text", or any line ending with "?"
+    const qMatch =
+      line.match(/^(?:Q\.?\s*)?(\d+)[.)]\s+(.+)/) ||
+      line.match(/^(?:Question\s+\d+[.):]?\s*)(.+)/i) ||
+      (line.endsWith('?') && line.length > 10 ? ['', '', line] : null);
+
+    if (!qMatch) { i++; continue; }
+
+    const questionText = (qMatch[2] || qMatch[1] || line).trim();
+
+    // Skip if too short to be a real question
+    if (questionText.length < 5) { i++; continue; }
+
+    const options     = [];
+    let   answerIndex = null;
+    i++;
+
+    // ── Collect options and answer from following lines ──
+    while (i < lines.length) {
+      const l = lines[i];
+
+      // Option patterns:
+      // "A. text"  "A) text"  "a. text"  "a) text"
+      // "(A) text"  "(a) text"
+      // "- text"  "• text"  "* text"  (bullet style, max 4)
+      const optLetterMatch = l.match(/^[\[(]?([A-Ea-e])[.)\]]\s+(.+)/);
+      const optBulletMatch = !optLetterMatch && options.length < 4
+        ? l.match(/^[-•*]\s+(.+)/)
+        : null;
+
+      if (optLetterMatch) {
+        options.push(optLetterMatch[2].trim());
+        i++;
+        continue;
+      }
+
+      if (optBulletMatch) {
+        options.push(optBulletMatch[1].trim());
+        i++;
+        continue;
+      }
+
+      // Answer line patterns:
+      // "Answer: B"  "Ans: B"  "Correct: B"  "Answer: Lagos"
+      // "Answer: B. Lagos"  "Ans: 2"
+      const ansMatch = l.match(
+        /^(?:answer|ans|correct\s*answer|key)[.):]\s*([A-Ea-e\d])/i
+      );
+      if (ansMatch) {
+        const raw = ansMatch[1].toUpperCase();
+        // Letter answer → index
+        if (/[A-E]/.test(raw)) {
+          answerIndex = raw.charCodeAt(0) - 65; // A=0, B=1 ...
+        } else {
+          // Numeric answer like "Ans: 2" (1-based)
+          const num = parseInt(raw);
+          if (!isNaN(num) && num >= 1 && num <= 6) answerIndex = num - 1;
+        }
+        i++;
+        continue;
+      }
+
+      // Blank line or next question — stop collecting for this question
+      if (
+        l === '' ||
+        l.match(/^(?:Q\.?\s*)?\d+[.)]\s+/) ||
+        l.match(/^(?:Question\s+\d+)/i) ||
+        (l.endsWith('?') && l.length > 10 && options.length >= 2)
+      ) {
+        break;
+      }
+
+      // Unrecognised line — if we already have options, stop; otherwise skip
+      if (options.length > 0) break;
+      i++;
+    }
+
+    // Only save if we have a question + at least 2 options
+    if (questionText && options.length >= 2) {
+      // Clamp answerIndex to valid range
+      if (answerIndex !== null && answerIndex >= options.length) answerIndex = null;
+      questions.push({ question: questionText, options, answer: answerIndex });
+    }
   }
 
-  const data       = await response.json();
-  const textBlock  = data.content.find(b => b.type === 'text');
-  if (!textBlock) throw new Error('No text in Claude response');
-
-  // Strip any accidental markdown fences just in case
-  const clean = textBlock.text
-    .replace(/```json/gi, '')
-    .replace(/```/g, '')
-    .trim();
-
-  return JSON.parse(clean);
+  return questions;
 }
 
-// ── Loading state helpers ──
+// ── Loading helpers ──
 function showLoadingState(msg) {
   const zone = document.getElementById('dropZone');
   zone.innerHTML = `
@@ -185,9 +232,8 @@ function resetLoadingState() {
     <div class="drop-sub">or</div>
     <label class="file-label" for="fileInput">Browse File</label>
     <input type="file" id="fileInput" accept=".docx,.doc,.txt" hidden />
-    <div class="drop-hint">Word (.docx/.doc) or plain text (.txt) supported</div>
+    <div class="drop-hint">Word (.docx / .doc) or plain text (.txt)</div>
   `;
-  // Re-attach file input listener since we rebuilt the DOM
   document.getElementById('fileInput').addEventListener('change', handleFileSelect);
 }
 
@@ -337,10 +383,10 @@ function submitTest() {
   let correct = 0, wrong = 0, skipped = 0, noKey = 0;
 
   parsedQuestions.forEach((q, i) => {
-    if      (answers[i] === null)        skipped++;
-    else if (q.answer === null)          noKey++;
-    else if (answers[i] === q.answer)    correct++;
-    else                                 wrong++;
+    if      (answers[i] === null)      skipped++;
+    else if (q.answer === null)        noKey++;
+    else if (answers[i] === q.answer)  correct++;
+    else                               wrong++;
   });
 
   const gradeable = parsedQuestions.length - noKey;
@@ -358,11 +404,11 @@ function submitTest() {
   }
 
   let emoji, title, sub;
-  if      (pct === null) { emoji = '📋'; title = 'Test Complete!';    sub = 'No answer keys found — review your responses below.'; }
-  else if (pct >= 80)    { emoji = '🏆'; title = 'Outstanding!';      sub = "You're well prepared. Keep it up!"; }
-  else if (pct >= 60)    { emoji = '👍'; title = 'Good Job!';          sub = "Solid performance. A little more and you'll ace it."; }
-  else if (pct >= 40)    { emoji = '📚'; title = 'Keep Practising!';   sub = "You're getting there. Review below and retake."; }
-  else                   { emoji = '💪'; title = "Don't Give Up!";      sub = "Every attempt makes you better. Try again!"; }
+  if      (pct === null) { emoji = '📋'; title = 'Test Complete!';   sub = 'No answer keys found — review your responses below.'; }
+  else if (pct >= 80)    { emoji = '🏆'; title = 'Outstanding!';     sub = "You're well prepared. Keep it up!"; }
+  else if (pct >= 60)    { emoji = '👍'; title = 'Good Job!';         sub = "Solid performance. A little more and you'll ace it."; }
+  else if (pct >= 40)    { emoji = '📚'; title = 'Keep Practising!';  sub = "You're getting there. Review below and retake."; }
+  else                   { emoji = '💪'; title = "Don't Give Up!";     sub = "Every attempt makes you better. Try again!"; }
 
   document.getElementById('resultEmoji').textContent = emoji;
   document.getElementById('resultTitle').textContent = title;

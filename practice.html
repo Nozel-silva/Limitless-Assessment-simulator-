@@ -11,8 +11,14 @@
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="logo">Precision<span>Test</span></div>
-  <div class="user-info">Logged in as <strong id="userEmail">—</strong></div>
-  <button class="logout-btn" onclick="logout()">Sign Out</button>
+  <div class="topbar-right">
+    <div class="profile-chip" id="profileChip">
+      <span class="profile-dot"></span>
+      <span class="profile-email" id="profileEmail">—</span>
+      <span class="session-timer" id="sessionTimer"></span>
+      <button class="profile-logout" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
 </div>
 
 <!-- SCREEN 1: SELECT MODE -->
@@ -20,8 +26,9 @@
   <div class="select-screen">
     <div class="select-header">
       <h1>Choose Your Test</h1>
-      <p>Select the format that matches your target assessment. You can retake as many times as you like.</p>
+      <p>Select the format that matches your target assessment. Retake as many times as you like.</p>
     </div>
+
     <div class="mode-cards">
       <div class="mode-card" id="mode-25" onclick="selectMode(25, 10)">
         <span class="mode-icon">⚡</span>
@@ -53,7 +60,19 @@
           <span class="meta-pill">⏱ 30 Minutes</span>
         </div>
       </div>
+      <!-- Upload card -->
+      <div class="mode-card mode-card-upload" onclick="window.location.href='upload.html'">
+        <span class="mode-icon">📂</span>
+        <div class="mode-badge mode-badge-blue">Custom</div>
+        <h3>Your Own Questions</h3>
+        <p>Upload a Word or text file with your own questions and take a custom timed test instantly.</p>
+        <div class="mode-meta">
+          <span class="meta-pill">📁 Upload File</span>
+          <span class="meta-pill">⏱ Custom Timer</span>
+        </div>
+      </div>
     </div>
+
     <button class="start-btn" id="startBtn" onclick="startTest()" disabled>Select a test to begin</button>
   </div>
 </div>
@@ -76,7 +95,7 @@
       <div class="options" id="optionsContainer"></div>
       <div class="q-footer">
         <button class="skip-btn" onclick="skipQuestion()">Skip this question</button>
-        <div style="display:flex;gap:12px;">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
           <button class="submit-test-btn" onclick="confirmSubmit()">Submit Test</button>
           <button class="next-btn" id="nextBtn" onclick="nextQuestion()" disabled>Next →</button>
         </div>
@@ -114,7 +133,6 @@
   </div>
 </div>
 
-<!-- questions.js first (defines QUESTION_BANK), then practice.js -->
 <script src="questions.js"></script>
 <script src="practice.js"></script>
 </body>

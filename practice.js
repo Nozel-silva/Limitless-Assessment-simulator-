@@ -1,12 +1,54 @@
-// ── Auth guard ──
-const currentUser = localStorage.getItem('pt_current_user');
-if (!currentUser) { window.location.href = 'index.html'; }
-document.getElementById('userEmail').textContent = currentUser;
+// ── Session guard ──
+const SESSION_DURATION = 30 * 60 * 1000;
+let sessionInterval = null;
+
+function checkSession() {
+  const email     = localStorage.getItem('pt_current_user');
+  const expiresAt = parseInt(localStorage.getItem('pt_session_expires') || '0');
+  if (!email || expiresAt <= Date.now()) {
+    localStorage.removeItem('pt_current_user');
+    localStorage.removeItem('pt_session_expires');
+    window.location.href = 'index.html';
+    return;
+  }
+  document.getElementById('profileEmail').textContent = email;
+  startSessionCountdown(expiresAt);
+}
+
+function startSessionCountdown(expiresAt) {
+  clearInterval(sessionInterval);
+  updateCountdown(expiresAt);
+  sessionInterval = setInterval(() => {
+    const remaining = expiresAt - Date.now();
+    if (remaining <= 0) {
+      clearInterval(sessionInterval);
+      localStorage.removeItem('pt_current_user');
+      localStorage.removeItem('pt_session_expires');
+      alert('⏰ Your session has expired. Please sign in again.');
+      window.location.href = 'index.html';
+    } else {
+      updateCountdown(expiresAt);
+    }
+  }, 1000);
+}
+
+function updateCountdown(expiresAt) {
+  const remaining = Math.max(0, expiresAt - Date.now());
+  const m = Math.floor(remaining / 60000).toString().padStart(2, '0');
+  const s = Math.floor((remaining % 60000) / 1000).toString().padStart(2, '0');
+  const el = document.getElementById('sessionTimer');
+  if (el) el.textContent = `${m}:${s}`;
+}
 
 function logout() {
+  clearInterval(sessionInterval);
   localStorage.removeItem('pt_current_user');
+  localStorage.removeItem('pt_session_expires');
   window.location.href = 'index.html';
 }
+
+// Run session check on load
+checkSession();
 
 // ── State ──
 let selectedQuestions = 30;
@@ -25,7 +67,7 @@ function selectMode(questions, minutes) {
   document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
   document.getElementById(`mode-${questions}`).classList.add('selected');
   const btn = document.getElementById('startBtn');
-  btn.disabled = false;
+  btn.disabled    = false;
   btn.textContent = `Start ${questions}-Question Test (${minutes} min) →`;
 }
 
@@ -74,7 +116,7 @@ function updateTimerDisplay() {
 
   const box = document.getElementById('timerBox');
   box.className = 'timer-box';
-  if (secondsLeft <= 60) box.classList.add('danger');
+  if      (secondsLeft <= 60)                          box.classList.add('danger');
   else if (secondsLeft <= selectedMinutes * 60 * 0.25) box.classList.add('warning');
 }
 
@@ -93,14 +135,14 @@ function renderQuestion() {
   container.innerHTML = '';
 
   q.options.forEach((opt, i) => {
-    const btn = document.createElement('button');
+    const btn     = document.createElement('button');
     btn.className = 'option-btn' + (answers[currentQ] === i ? ' selected' : '');
     btn.innerHTML = `<span class="option-letter">${letters[i]}</span>${opt}`;
     btn.onclick   = () => selectAnswer(i);
     container.appendChild(btn);
   });
 
-  const nextBtn = document.getElementById('nextBtn');
+  const nextBtn       = document.getElementById('nextBtn');
   nextBtn.disabled    = answers[currentQ] === null;
   const isLast        = currentQ === testQuestions.length - 1;
   nextBtn.textContent = isLast ? 'Finish ✓' : 'Next →';
@@ -150,9 +192,9 @@ function submitTest() {
 
   let correct = 0, wrong = 0, skipped = 0;
   testQuestions.forEach((q, i) => {
-    if (answers[i] === null)         skipped++;
-    else if (answers[i] === q.answer) correct++;
-    else                              wrong++;
+    if      (answers[i] === null)      skipped++;
+    else if (answers[i] === q.answer)  correct++;
+    else                               wrong++;
   });
 
   const pct  = Math.round((correct / testQuestions.length) * 100);
@@ -163,10 +205,10 @@ function submitTest() {
   document.getElementById('scorePct').textContent = `${pct}%`;
 
   let emoji, title, sub;
-  if      (pct >= 80) { emoji = '🏆'; title = 'Outstanding!';       sub = "You're well prepared. Keep this up!"; }
-  else if (pct >= 60) { emoji = '👍'; title = 'Good Job!';           sub = "Solid performance. A little more practice and you'll ace it."; }
-  else if (pct >= 40) { emoji = '📚'; title = 'Keep Practising!';    sub = "You're getting there. Review the answers below and retake."; }
-  else                { emoji = '💪'; title = "Don't Give Up!";       sub = "Every attempt makes you better. Study and try again!"; }
+  if      (pct >= 80) { emoji = '🏆'; title = 'Outstanding!';      sub = "You're well prepared. Keep this up!"; }
+  else if (pct >= 60) { emoji = '👍'; title = 'Good Job!';          sub = "Solid performance. A little more and you'll ace it."; }
+  else if (pct >= 40) { emoji = '📚'; title = 'Keep Practising!';   sub = "You're getting there. Review below and retake."; }
+  else                { emoji = '💪'; title = "Don't Give Up!";      sub = "Every attempt makes you better. Try again!"; }
 
   document.getElementById('resultEmoji').textContent = emoji;
   document.getElementById('resultTitle').textContent = title;
@@ -176,7 +218,7 @@ function submitTest() {
   document.getElementById('rSkipped').textContent    = skipped;
   document.getElementById('rTime').textContent       = `${usedMins}m ${usedSecs}s`;
 
-  // Review
+  // Build review
   const reviewList = document.getElementById('reviewList');
   reviewList.innerHTML = '';
   const letters = ['A', 'B', 'C', 'D'];
@@ -191,6 +233,7 @@ function submitTest() {
     item.className = `review-item ${cls}`;
 
     let html = `<div class="review-q">Q${i + 1}. ${q.question}</div><div class="review-answers">`;
+
     if (isSkipped) {
       html += `<div class="review-ans skipped-ans">⏭ You skipped this question</div>`;
       html += `<div class="review-ans correct-ans">✅ Correct answer: ${letters[q.answer]}. ${q.options[q.answer]}</div>`;
@@ -200,6 +243,7 @@ function submitTest() {
       html += `<div class="review-ans your-ans">❌ Your answer: ${letters[userAns]}. ${q.options[userAns]}</div>`;
       html += `<div class="review-ans correct-ans">✅ Correct: ${letters[q.answer]}. ${q.options[q.answer]}</div>`;
     }
+
     html += '</div>';
     item.innerHTML = html;
     reviewList.appendChild(item);
@@ -209,10 +253,18 @@ function submitTest() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function retakeTest()  { startTest(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-function goToSelect()  { showScreen('selectScreen'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+// ── Navigation ──
+function retakeTest() {
+  startTest();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToSelect() {
+  showScreen('selectScreen');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-}
+           }

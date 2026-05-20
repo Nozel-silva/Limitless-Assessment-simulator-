@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assessment Mastery Guide — PrecisionTest</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--primary:#1a1a2e;--accent:#e94560;--gold:#f5a623;--text:#2d2d2d;--muted:#6b7280;--border:#e5e7eb;--light:#f0f4ff;--success:#10b981}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f8fc;color:var(--text);min-height:100vh}
+
+    /* TOPBAR */
+    .topbar{background:var(--primary);padding:14px 40px;display:flex;justify-content:space-between;align-items:center}
+    .logo{font-size:1.3rem;font-weight:800;color:#fff}
+    .logo span{color:var(--accent)}
+    .back-link{color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.88rem;transition:color 0.2s}
+    .back-link:hover{color:#fff}
+
+    /* HERO */
+    .book-hero{background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%);padding:80px 24px 70px;text-align:center;position:relative;overflow:hidden}
+    .book-hero::before{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(245,166,35,0.12) 0%,transparent 70%);top:-100px;right:-100px;border-radius:50%}
+    .book-hero::after{content:'';position:absolute;width:350px;height:350px;background:radial-gradient(circle,rgba(233,69,96,0.1) 0%,transparent 70%);bottom:-50px;left:-50px;border-radius:50%}
+    .hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+    .hero-badge{display:inline-block;background:rgba(245,166,35,0.2);border:1px solid rgba(245,166,35,0.4);color:var(--gold);padding:6px 18px;border-radius:50px;font-size:0.8rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
+    .book-hero h1{font-size:clamp(1.8rem,5vw,3rem);font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px}
+    .book-hero h1 span{color:var(--gold)}
+    .book-hero .sub{color:rgba(255,255,255,0.7);font-size:clamp(0.95rem,2vw,1.1rem);line-height:1.7;margin-bottom:32px;max-width:580px;margin-left:auto;margin-right:auto}
+    .price-tag{display:inline-flex;align-items:center;gap:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:60px;padding:12px 28px;margin-bottom:28px}
+    .price-old{color:rgba(255,255,255,0.4);font-size:1rem;text-decoration:line-through}
+    .price-new{color:var(--gold);font-size:1.8rem;font-weight:900}
+    .price-label{color:rgba(255,255,255,0.6);font-size:0.82rem}
+    .cta-btn{display:inline-block;background:var(--gold);color:#1a1a2e;text-decoration:none;padding:18px 50px;border-radius:50px;font-size:1.05rem;font-weight:800;transition:all 0.25s;box-shadow:0 8px 30px rgba(245,166,35,0.4);cursor:pointer;border:none;font-family:inherit}
+    .cta-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(245,166,35,0.5)}
+    .hero-trust{display:flex;justify-content:center;gap:24px;margin-top:22px;flex-wrap:wrap}
+    .trust-item{color:rgba(255,255,255,0.55);font-size:0.82rem;display:flex;align-items:center;gap:6px}
+
+    /* WHAT YOU GET */
+    .section{padding:70px 24px;background:#fff}
+    .section-inner{max-width:900px;margin:0 auto}
+    .section-tag{text-align:center;font-size:0.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+    .section h2{text-align:center;font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:900;color:var(--primary);margin-bottom:40px}
+    .chapters-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+    .chapter-card{background:var(--light);border-radius:16px;padding:24px 22px;border:1px solid var(--border)}
+    .chapter-num{font-size:0.75rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+    .chapter-card h3{font-size:1rem;font-weight:800;color:var(--primary);margin-bottom:8px}
+    .chapter-card p{color:var(--muted);font-size:0.88rem;line-height:1.6}
+
+    /* WHO IT'S FOR */
+    .for-section{padding:70px 24px;background:var(--light)}
+    .for-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;max-width:900px;margin:0 auto}
+    .for-card{background:#fff;border-radius:14px;padding:22px 18px;border:1px solid var(--border);text-align:center}
+    .for-icon{font-size:2rem;margin-bottom:10px}
+    .for-card h3{font-size:0.95rem;font-weight:700;color:var(--primary);margin-bottom:6px}
+    .for-card p{color:var(--muted);font-size:0.85rem;line-height:1.5}
+
+    /* TESTIMONIALS */
+    .testi-section{padding:70px 24px;background:#fff}
+    .testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:900px;margin:0 auto}
+    .testi-card{background:var(--light);border-radius:16px;padding:24px 22px;border:1px solid var(--border)}
+    .testi-stars{color:var(--gold);font-size:1rem;margin-bottom:10px}
+    .testi-text{color:var(--text);font-size:0.9rem;line-height:1.65;margin-bottom:14px;font-style:italic}
+    .testi-name{font-weight:700;color:var(--primary);font-size:0.88rem}
+    .testi-role{color:var(--muted);font-size:0.8rem}
+
+    /* BOTTOM CTA */
+    .bottom-cta{background:linear-gradient(135deg,#e94560,#c73652);padding:80px 24px;text-align:center}
+    .bottom-cta h2{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;color:#fff;margin-bottom:14px}
+    .bottom-cta p{color:rgba(255,255,255,0.8);font-size:1rem;margin-bottom:32px}
+    .btn-white{background:#fff;color:var(--accent);border:none;padding:17px 48px;border-radius:50px;font-size:1rem;font-weight:800;cursor:pointer;transition:all 0.25s;box-shadow:0 8px 24px rgba(0,0,0,0.2);font-family:inherit;text-decoration:none;display:inline-block}
+    .btn-white:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,0,0,0.25)}
+
+    /* FOOTER */
+    footer{background:#0d0d1a;color:rgba(255,255,255,0.4);text-align:center;padding:22px 20px;font-size:0.82rem}
+    footer a{color:rgba(255,255,255,0.4);text-decoration:none;margin:0 8px}
+    footer a:hover{color:var(--accent)}
+    footer span{color:var(--accent)}
+    .footer-links{margin-bottom:8px}
+
+    /* GUARANTEE */
+    .guarantee{display:inline-flex;align-items:center;gap:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:12px 20px;margin-top:20px}
+    .guarantee span{color:var(--success);font-size:0.88rem;font-weight:600}
+
+    @media(max-width:768px){
+      .topbar{padding:12px 16px}
+      .book-hero{padding:60px 16px 50px}
+      .price-tag{flex-direction:column;gap:6px;padding:14px 20px}
+      .price-new{font-size:1.5rem}
+      .cta-btn{width:100%;max-width:300px;padding:16px 24px;text-align:center}
+      .section{padding:50px 16px}
+      .for-section{padding:50px 16px}
+      .testi-section{padding:50px 16px}
+      .bottom-cta{padding:60px 16px}
+      .btn-white{width:100%;max-width:300px;text-align:center}
+      .hero-trust{gap:14px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Precision<span>Test</span></div>
+  <a href="index.html" class="back-link">← Back to Home</a>
+</div>
+
+<!-- HERO -->
+<section class="book-hero">
+  <div class="hero-inner">
+    <div class="hero-badge">📘 Assessment Mastery Guide</div>
+    <h1>Pass Every Assessment<br/><span>Swiftly & Confidently</span></h1>
+    <p class="sub">The complete playbook used by high scorers — covering speed techniques, pattern recognition, elimination strategies, and a proven study plan that gets results fast.</p>
+
+    <div class="price-tag">
+      <span class="price-old">₦5,000</span>
+      <span class="price-new">₦2,500</span>
+      <span class="price-label">One-time payment · Instant access</span>
+    </div>
+
+    <br/>
+    <a href="pay.html" class="cta-btn">Get Instant Access →</a>
+
+    <div class="guarantee">
+      <span>✅ Digital guide · Instant delivery · One-time payment</span>
+    </div>
+
+    <div class="hero-trust">
+      <span class="trust-item">⭐ Trusted by 500+ applicants</span>
+      <span class="trust-item">🔒 Secure payment</span>
+      <span class="trust-item">📲 Works on any device</span>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S INSIDE -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-tag">What's Inside</div>
+    <h2>Everything You Need to Score Higher</h2>
+    <div class="chapters-grid">
+      <div class="chapter-card">
+        <div class="chapter-num">Chapter 1</div>
+        <h3>⚡ Speed Without Sacrifice</h3>
+        <p>Learn how to read questions faster, identify what's being asked in seconds, and move through a 50-question test without running out of time.</p>
+      </div>
+      <div class="chapter-card">
+        <div class="chapter-num">Chapter 2</div>
+        <h3>🎯 Pattern Recognition</h3>
+        <p>Assessments reuse patterns. Learn to spot them — numerical sequences, word problems, logical reasoning — so questions feel familiar before you even start.</p>
+      </div>
+      <div class="chapter-card">
+        <div class="chapter-num">Chapter 3</div>
+        <h3>🔍 The Elimination Method</h3>
+        <p>When you're unsure, don't guess blindly. This chapter teaches you how to eliminate wrong answers systematically and boost your odds to 50% or higher every time.</p>
+      </div>
+      <div class="chapter-card">
+        <div class="chapter-num">Chapter 4</div>
+        <h3>⏱ Time Management Tactics</h3>
+        <p>How to divide your time across sections, when to skip and come back, and how to manage exam anxiety so the clock works for you, not against you.</p>
+      </div>
+      <div class="chapter-card">
+        <div class="chapter-num">Chapter 5</div>
+        <h3>🧮 Numerical Reasoning Fast-Track</h3>
+        <p>Shortcuts and mental math tricks for percentages, ratios, averages, and sequences — the exact question types that appear in Nigerian aptitude tests most often.</p>
+      </div>
+      <div class="chapter-card">
+        <div class="chapter-num">Chapter 6</div>
+        <h3>📈 The 7-Day Study Plan</h3>
+        <p>A day-by-day action plan to go from unprepared to confident in one week. Includes what to practice each day, how long, and what to review the night before.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section class="for-section">
+  <div class="section-inner">
+    <div class="section-tag" style="text-align:center">Who This Is For</div>
+    <h2 style="text-align:center;font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:900;color:var(--primary);margin-bottom:30px">Built for Every Nigerian Applicant</h2>
+    <div class="for-grid">
+      <div class="for-card">
+        <div class="for-icon">🎓</div>
+        <h3>Fresh Graduates</h3>
+        <p>Just entering the job market and facing your first assessments. Start strong with the right preparation.</p>
+      </div>
+      <div class="for-card">
+        <div class="for-icon">💼</div>
+        <h3>Experienced Professionals</h3>
+        <p>Switching jobs or applying to bigger firms with tougher screening tests. Sharpen your edge.</p>
+      </div>
+      <div class="for-card">
+        <div class="for-icon">🏦</div>
+        <h3>Banking & Finance Applicants</h3>
+        <p>Targeting GTB, Access, Zenith, or any institution known for rigorous numerical assessments.</p>
+      </div>
+      <div class="for-card">
+        <div class="for-icon">🏢</div>
+        <h3>FMCG & Corporate Roles</h3>
+        <p>Applying to Unilever, P&G, Nestlé, or similar companies that use psychometric and aptitude tests.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section">
+  <div class="section-inner">
+    <div class="section-tag" style="text-align:center">What People Say</div>
+    <h2 style="text-align:center;font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:900;color:var(--primary);margin-bottom:30px">Real Results from Real Applicants</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"I failed two bank assessments before I found this guide. The elimination method alone changed everything. Got my GTB offer two weeks after reading it."</p>
+        <div class="testi-name">Chukwuemeka O.</div>
+        <div class="testi-role">Graduate Trainee, GTBank</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"The 7-day plan is incredibly practical. I didn't have weeks to prepare — just one week before the test. Followed it exactly and scored in the top 10%."</p>
+        <div class="testi-name">Adaeze M.</div>
+        <div class="testi-role">Operations Analyst, FMCG Company</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"The speed techniques for numerical reasoning are gold. I used to run out of time on every test. Now I finish with minutes to spare and check my answers."</p>
+        <div class="testi-name">Babatunde F.</div>
+        <div class="testi-role">Financial Analyst, Lagos</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section class="bottom-cta">
+  <h2>Your Next Assessment Is Coming.<br/>Be Ready for It.</h2>
+  <p>Don't leave your career to chance. Get the guide, follow the plan, and walk in with confidence.</p>
+  <a href="pay.html" class="btn-white">Get the Guide for ₦2,500 →</a>
+  <div style="margin-top:16px">
+    <span style="color:rgba(255,255,255,0.6);font-size:0.85rem">⚡ Instant access after payment · Works on mobile & desktop</span>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+  </div>
+  <p>© 2025 <span>PrecisionTest</span> — All rights reserved.</p>
+</footer>
+
+</body>
+</html>

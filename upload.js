@@ -1,14 +1,64 @@
+// ── Session guard ──
+const SESSION_DURATION = 30 * 60 * 1000;
+let sessionInterval = null;
+
+function checkSession() {
+  const email     = localStorage.getItem('pt_current_user');
+  const expiresAt = parseInt(localStorage.getItem('pt_session_expires') || '0');
+  if (!email || expiresAt <= Date.now()) {
+    localStorage.removeItem('pt_current_user');
+    localStorage.removeItem('pt_session_expires');
+    window.location.href = 'index.html';
+    return;
+  }
+  document.getElementById('profileEmail').textContent = email;
+  startSessionCountdown(expiresAt);
+}
+
+function startSessionCountdown(expiresAt) {
+  clearInterval(sessionInterval);
+  updateCountdown(expiresAt);
+  sessionInterval = setInterval(() => {
+    const remaining = expiresAt - Date.now();
+    if (remaining <= 0) {
+      clearInterval(sessionInterval);
+      localStorage.removeItem('pt_current_user');
+      localStorage.removeItem('pt_session_expires');
+      alert('⏰ Your session has expired. Please sign in again.');
+      window.location.href = 'index.html';
+    } else {
+      updateCountdown(expiresAt);
+    }
+  }, 1000);
+}
+
+function updateCountdown(expiresAt) {
+  const remaining = Math.max(0, expiresAt - Date.now());
+  const m = Math.floor(remaining / 60000).toString().padStart(2, '0');
+  const s = Math.floor((remaining % 60000) / 1000).toString().padStart(2, '0');
+  const el = document.getElementById('sessionTimer');
+  if (el) el.textContent = `${m}:${s}`;
+}
+
+function logout() {
+  clearInterval(sessionInterval);
+  localStorage.removeItem('pt_current_user');
+  localStorage.removeItem('pt_session_expires');
+  window.location.href = 'index.html';
+}
+
 // ── State ──
 let parsedQuestions = [];
 let currentQ        = 0;
 let answers         = [];
-let timerInterval   = null;
+let testTimerInterval = null;
 let secondsLeft     = 0;
 let startTime       = null;
 let customMinutes   = 30;
 
 // ── DOM ready ──
 document.addEventListener('DOMContentLoaded', () => {
+  checkSession();
   setupDropZone();
   document.getElementById('fileInput').addEventListener('change', handleFileSelect);
   document.getElementById('timerInput').addEventListener('input', (e) => {
@@ -67,17 +117,12 @@ async function processFile(file) {
     }
 
     showLoadingState('🔍 Scanning for questions...');
-
-    // Small delay so the UI updates before heavy parsing
     await new Promise(r => setTimeout(r, 50));
 
     const questions = parseQuestions(rawText);
 
     if (!questions || questions.length === 0) {
-      showError(
-        '❌ No questions could be found. Make sure your file has questions with A B C D options. ' +
-        'Open the format guide below for examples.'
-      );
+      showError('❌ No questions could be found. Make sure your file has questions with A B C D options. Open the format guide below for examples.');
       resetLoadingState();
       return;
     }
@@ -104,17 +149,9 @@ async function processFile(file) {
 function parseQuestions(raw) {
   const questions = [];
 
-  // Normalise: unify line endings, remove carriage returns
   let text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-
-  // Remove common junk lines (page numbers, headers)
   text = text.replace(/^\s*page\s*\d+\s*$/gim, '');
-  text = text.replace(/^\s*\d+\s*$/gm, match => {
-    // Keep lone numbers only if they look like question numbers (short line)
-    return match.trim().length <= 3 ? match : '';
-  });
 
-  // Split into lines and clean
   const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
   let i = 0;
@@ -122,9 +159,6 @@ function parseQuestions(raw) {
   while (i < lines.length) {
     const line = lines[i];
 
-    // ── Detect a question line ──
-    // Matches: "1. Question", "1) Question", "Q1. Question", "Q1) Question",
-    //          "Question 1. text", or any line ending with "?"
     const qMatch =
       line.match(/^(?:Q\.?\s*)?(\d+)[.)]\s+(.+)/) ||
       line.match(/^(?:Question\s+\d+[.):]?\s*)(.+)/i) ||
@@ -133,22 +167,15 @@ function parseQuestions(raw) {
     if (!qMatch) { i++; continue; }
 
     const questionText = (qMatch[2] || qMatch[1] || line).trim();
-
-    // Skip if too short to be a real question
     if (questionText.length < 5) { i++; continue; }
 
     const options     = [];
     let   answerIndex = null;
     i++;
 
-    // ── Collect options and answer from following lines ──
     while (i < lines.length) {
       const l = lines[i];
 
-      // Option patterns:
-      // "A. text"  "A) text"  "a. text"  "a) text"
-      // "(A) text"  "(a) text"
-      // "- text"  "• text"  "* text"  (bullet style, max 4)
       const optLetterMatch = l.match(/^[\[(]?([A-Ea-e])[.)\]]\s+(.+)/);
       const optBulletMatch = !optLetterMatch && options.length < 4
         ? l.match(/^[-•*]\s+(.+)/)
@@ -166,19 +193,12 @@ function parseQuestions(raw) {
         continue;
       }
 
-      // Answer line patterns:
-      // "Answer: B"  "Ans: B"  "Correct: B"  "Answer: Lagos"
-      // "Answer: B. Lagos"  "Ans: 2"
-      const ansMatch = l.match(
-        /^(?:answer|ans|correct\s*answer|key)[.):]\s*([A-Ea-e\d])/i
-      );
+      const ansMatch = l.match(/^(?:answer|ans|correct\s*answer|key)[.):]\s*([A-Ea-e\d])/i);
       if (ansMatch) {
         const raw = ansMatch[1].toUpperCase();
-        // Letter answer → index
         if (/[A-E]/.test(raw)) {
-          answerIndex = raw.charCodeAt(0) - 65; // A=0, B=1 ...
+          answerIndex = raw.charCodeAt(0) - 65;
         } else {
-          // Numeric answer like "Ans: 2" (1-based)
           const num = parseInt(raw);
           if (!isNaN(num) && num >= 1 && num <= 6) answerIndex = num - 1;
         }
@@ -186,7 +206,6 @@ function parseQuestions(raw) {
         continue;
       }
 
-      // Blank line or next question — stop collecting for this question
       if (
         l === '' ||
         l.match(/^(?:Q\.?\s*)?\d+[.)]\s+/) ||
@@ -196,14 +215,11 @@ function parseQuestions(raw) {
         break;
       }
 
-      // Unrecognised line — if we already have options, stop; otherwise skip
       if (options.length > 0) break;
       i++;
     }
 
-    // Only save if we have a question + at least 2 options
     if (questionText && options.length >= 2) {
-      // Clamp answerIndex to valid range
       if (answerIndex !== null && answerIndex >= options.length) answerIndex = null;
       questions.push({ question: questionText, options, answer: answerIndex });
     }
@@ -232,7 +248,7 @@ function resetLoadingState() {
     <div class="drop-sub">or</div>
     <label class="file-label" for="fileInput">Browse File</label>
     <input type="file" id="fileInput" accept=".docx,.doc,.txt" hidden />
-    <div class="drop-hint">Word (.docx / .doc) or plain text (.txt)</div>
+    <div class="drop-hint">Word (.docx / .doc) or plain text (.txt) — any question format</div>
   `;
   document.getElementById('fileInput').addEventListener('change', handleFileSelect);
 }
@@ -283,18 +299,18 @@ function beginTest() {
   document.getElementById('qTotal').textContent = parsedQuestions.length;
   showScreen('testScreen');
   renderQuestion();
-  startTimer();
+  startTestTimer();
 }
 
-// ── Timer ──
-function startTimer() {
-  clearInterval(timerInterval);
+// ── Test timer ──
+function startTestTimer() {
+  clearInterval(testTimerInterval);
   updateTimerDisplay();
-  timerInterval = setInterval(() => {
+  testTimerInterval = setInterval(() => {
     secondsLeft--;
     updateTimerDisplay();
     if (secondsLeft <= 0) {
-      clearInterval(timerInterval);
+      clearInterval(testTimerInterval);
       autoSubmit();
     }
   }, 1000);
@@ -375,7 +391,7 @@ function autoSubmit() {
 
 // ── Submit & results ──
 function submitTest() {
-  clearInterval(timerInterval);
+  clearInterval(testTimerInterval);
   const timeUsed = Math.floor((Date.now() - startTime) / 1000);
   const usedMins = Math.floor(timeUsed / 60);
   const usedSecs = timeUsed % 60;
@@ -478,12 +494,12 @@ function retakeTest() {
   document.getElementById('noAnswerNote').classList.remove('visible');
   showScreen('testScreen');
   renderQuestion();
-  startTimer();
+  startTestTimer();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function goToUpload() {
-  clearInterval(timerInterval);
+  clearInterval(testTimerInterval);
   document.getElementById('noAnswerNote').classList.remove('visible');
   showScreen('uploadScreen');
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -511,4 +527,4 @@ function clearError() {
   const el = document.getElementById('parseError');
   el.innerHTML = '';
   el.classList.remove('visible');
-}
+  }

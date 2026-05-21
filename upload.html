@@ -12,6 +12,12 @@
 <div class="topbar">
   <div class="logo">Precision<span>Test</span></div>
   <div class="topbar-right">
+    <div class="profile-chip" id="profileChip">
+      <span class="profile-dot"></span>
+      <span class="profile-email" id="profileEmail">—</span>
+      <span class="session-timer" id="sessionTimer"></span>
+      <button class="profile-logout" onclick="logout()">Sign Out</button>
+    </div>
     <a href="index.html" class="back-link">← Back to Home</a>
   </div>
 </div>
@@ -23,7 +29,7 @@
     <div class="upload-header">
       <div class="upload-badge">📂 Custom Test</div>
       <h1>Upload Your Question File</h1>
-      <p>Upload a <strong>.docx</strong> or <strong>.txt</strong> file containing your questions and our AI will turn it into a live timed test instantly — no specific format required.</p>
+      <p>Upload a <strong>.docx</strong> or <strong>.txt</strong> file containing your questions and we'll turn it into a live timed test instantly — no specific format required.</p>
     </div>
 
     <!-- DROP ZONE -->
@@ -81,14 +87,14 @@
         📋 What kind of file can I upload? <span id="guideArrow">▼</span>
       </div>
       <div class="guide-body" id="guideBody">
-        <p>Upload any <strong>.docx</strong> or <strong>.txt</strong> file containing questions. The AI will figure out the structure automatically — no specific format required. All of these work:</p>
+        <p>Upload any <strong>.docx</strong> or <strong>.txt</strong> file containing questions. The parser will detect the structure automatically. All of these formats work:</p>
         <div class="guide-example">
 // Numbered with letters
 1. What is the capital of Nigeria?
 A) Lagos  B) Abuja  C) Kano  D) Ibadan
 Answer: B
 
-// Bullet points, no numbers
+// Bullet points
 What is 5 + 5?
 - 8
 - 10
@@ -105,7 +111,6 @@ a. Earth   b. Venus   c. Mercury   d. Mars
           <li>Options can be on separate lines or on the same line</li>
           <li>Answer key is optional — include it for scoring, leave it out if not needed</li>
           <li>"Answer:", "Ans:", "Correct:" — any of these will be recognised</li>
-          <li>The AI handles messy, inconsistent, or mixed formatting in the same file</li>
         </ul>
       </div>
     </div>
@@ -116,18 +121,15 @@ a. Earth   b. Venus   c. Mercury   d. Mars
 <!-- SCREEN 2: TEST -->
 <div class="screen" id="testScreen">
   <div class="test-wrap">
-
     <div class="test-header">
       <div class="progress-info">
         Question <strong id="qCurrent">1</strong> of <strong id="qTotal">—</strong>
       </div>
       <div class="timer-box" id="timerBox">⏱ <span id="timerDisplay">00:00</span></div>
     </div>
-
     <div class="progress-bar-wrap">
       <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
     </div>
-
     <div class="q-card" id="qCard">
       <div class="q-num" id="qNum">Question 1</div>
       <div class="q-text" id="qText">Loading...</div>
@@ -140,61 +142,40 @@ a. Earth   b. Venus   c. Mercury   d. Mars
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
 <!-- SCREEN 3: RESULTS -->
 <div class="screen" id="resultsScreen">
   <div class="results-wrap">
-
     <div class="result-hero">
       <div class="result-emoji" id="resultEmoji">🎉</div>
       <h2 id="resultTitle">Test Complete!</h2>
       <p id="resultSub">Here's how you did</p>
-
       <div class="score-ring" id="scoreRing">
         <div id="scoreNum">—</div>
         <div class="score-pct" id="scorePct">—</div>
       </div>
-
       <div class="result-stats">
-        <div class="r-stat correct">
-          <div class="r-stat-num" id="rCorrect">0</div>
-          <div class="r-stat-label">Correct</div>
-        </div>
-        <div class="r-stat wrong">
-          <div class="r-stat-num" id="rWrong">0</div>
-          <div class="r-stat-label">Wrong</div>
-        </div>
-        <div class="r-stat skipped">
-          <div class="r-stat-num" id="rSkipped">0</div>
-          <div class="r-stat-label">Skipped</div>
-        </div>
-        <div class="r-stat">
-          <div class="r-stat-num" id="rTime">—</div>
-          <div class="r-stat-label">Time Used</div>
-        </div>
+        <div class="r-stat correct"><div class="r-stat-num" id="rCorrect">0</div><div class="r-stat-label">Correct</div></div>
+        <div class="r-stat wrong"><div class="r-stat-num" id="rWrong">0</div><div class="r-stat-label">Wrong</div></div>
+        <div class="r-stat skipped"><div class="r-stat-num" id="rSkipped">0</div><div class="r-stat-label">Skipped</div></div>
+        <div class="r-stat"><div class="r-stat-num" id="rTime">—</div><div class="r-stat-label">Time Used</div></div>
       </div>
-
       <div class="no-answer-note" id="noAnswerNote"></div>
     </div>
-
     <div class="result-actions">
       <button class="retake-btn" onclick="retakeTest()">🔁 Retake This Test</button>
       <button class="change-mode-btn" onclick="goToUpload()">📂 Upload New File</button>
     </div>
-
     <div class="review-section">
       <h3>📋 Question Review</h3>
       <div id="reviewList"></div>
     </div>
-
   </div>
 </div>
 
-<!-- mammoth.js for reading .docx files -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="upload.js"></script>
 </body>
-                                                                                            </html>
+        </html>

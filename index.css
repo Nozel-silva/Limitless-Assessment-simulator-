@@ -666,3 +666,88 @@ footer span { color: var(--accent); }
   .session-timer { display: none; }
   .profile-chip { padding: 5px 10px; }
  }
+
+/* ── COOKIE BANNER ── */
+.cookie-banner {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #fff;
+  border-top: 2px solid var(--border);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.1);
+  z-index: 9999;
+  padding: 18px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+.cookie-banner.hidden {
+  transform: translateY(110%);
+  pointer-events: none;
+}
+.cookie-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+  min-width: 260px;
+}
+.cookie-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+.cookie-content p {
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin: 0;
+}
+.cookie-content a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.cookie-content a:hover { text-decoration: underline; }
+.cookie-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.cookie-accept {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 10px 26px;
+  border-radius: 50px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.cookie-accept:hover { background: #c73652; }
+.cookie-learn {
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.cookie-learn:hover { color: var(--text); text-decoration: underline; }
+
+@media (max-width: 768px) {
+  .cookie-banner {
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .cookie-actions { width: 100%; }
+  .cookie-accept  { width: 100%; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .cookie-banner { padding: 14px 16px; }
+  .cookie-content p { font-size: 0.82rem; }
+}

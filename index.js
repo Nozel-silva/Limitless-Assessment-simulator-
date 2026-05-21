@@ -163,3 +163,26 @@ async function handleAuth() {
     submitBtn.textContent = 'Continue to Practice →';
   }
 }
+
+
+// ── Cookie consent ──
+function initCookieBanner() {
+  const accepted = localStorage.getItem('pt_cookies_accepted');
+  if (!accepted) {
+    document.getElementById('cookieBanner').classList.remove('hidden');
+  } else {
+    document.getElementById('cookieBanner').classList.add('hidden');
+  }
+}
+
+function acceptCookies() {
+  localStorage.setItem('pt_cookies_accepted', 'true');
+  document.getElementById('cookieBanner').classList.add('hidden');
+}
+
+// Call on DOM ready — add this inside your existing DOMContentLoaded
+// or just call it directly at the bottom of index.js
+document.addEventListener('DOMContentLoaded', () => {
+  initCookieBanner();
+  checkSession();
+});

@@ -6,7 +6,7 @@
   <title>Privacy Policy — PrecisionTest</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    :root{--primary:#1a1a2e;--accent:#e94560;--gold:#f5a623;--text:#2d2d2d;--muted:#6b7280;--border:#e5e7eb;--light:#f0f4ff}
+    :root{--primary:#1a1a2e;--accent:#e94560;--gold:#f5a623;--text:#2d2d2d;--muted:#6b7280;--border:#e5e7eb;--light:#f0f4ff;--success:#10b981}
     body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f8fc;color:var(--text);min-height:100vh}
     .topbar{background:var(--primary);padding:14px 40px;display:flex;justify-content:space-between;align-items:center}
     .logo{font-size:1.3rem;font-weight:800;color:#fff}
@@ -17,19 +17,39 @@
     .page-badge{display:inline-block;background:rgba(233,69,96,0.1);border:1px solid rgba(233,69,96,0.3);color:var(--accent);padding:5px 16px;border-radius:50px;font-size:0.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
     .page-wrap h1{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:900;color:var(--primary);margin-bottom:8px}
     .last-updated{color:var(--muted);font-size:0.85rem;margin-bottom:40px}
-    .section-block{background:#fff;border-radius:16px;padding:28px 28px;margin-bottom:20px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,0.05)}
-    .section-block h2{font-size:1.1rem;font-weight:800;color:var(--primary);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+    .ndpr-banner{background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.04));border:1px solid rgba(16,185,129,0.3);border-radius:14px;padding:18px 22px;margin-bottom:30px;display:flex;gap:14px;align-items:flex-start}
+    .ndpr-banner .icon{font-size:1.4rem;flex-shrink:0}
+    .ndpr-banner p{color:#065f46;font-size:0.88rem;line-height:1.65;margin:0}
+    .ndpr-banner strong{color:#065f46}
+    .section-block{background:#fff;border-radius:16px;padding:28px;margin-bottom:20px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+    .section-block h2{font-size:1.1rem;font-weight:800;color:var(--primary);margin-bottom:12px}
     .section-block p{color:var(--muted);line-height:1.75;font-size:0.93rem;margin-bottom:10px}
     .section-block p:last-child{margin-bottom:0}
-    .section-block ul{color:var(--muted);line-height:1.75;font-size:0.93rem;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+    .section-block ul{color:var(--muted);line-height:1.75;font-size:0.93rem;padding-left:20px;display:flex;flex-direction:column;gap:6px;margin-top:8px}
+    .retention-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:0.88rem}
+    .retention-table th{background:var(--light);color:var(--primary);font-weight:700;padding:10px 14px;text-align:left;border:1px solid var(--border)}
+    .retention-table td{padding:10px 14px;border:1px solid var(--border);color:var(--muted);line-height:1.5}
+    .retention-table tr:nth-child(even) td{background:#fafafa}
+    .rights-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:14px}
+    .right-item{background:var(--light);border-radius:10px;padding:14px 16px}
+    .right-item strong{display:block;color:var(--primary);font-size:0.88rem;margin-bottom:4px}
+    .right-item span{color:var(--muted);font-size:0.82rem;line-height:1.5}
     .contact-box{background:linear-gradient(135deg,#1a1a2e,#0f3460);border-radius:16px;padding:28px;text-align:center;margin-top:30px}
-    .contact-box p{color:rgba(255,255,255,0.7);font-size:0.93rem;margin-bottom:12px}
+    .contact-box p{color:rgba(255,255,255,0.7);font-size:0.93rem;margin-bottom:10px}
     .contact-box a{color:var(--accent);text-decoration:none;font-weight:600}
+    .contact-box a:hover{text-decoration:underline}
     footer{background:#0d0d1a;color:rgba(255,255,255,0.4);text-align:center;padding:22px 20px;font-size:0.82rem}
     footer a{color:rgba(255,255,255,0.4);text-decoration:none;margin:0 8px}
     footer a:hover{color:var(--accent)}
     footer span{color:var(--accent)}
-    @media(max-width:768px){.topbar{padding:12px 16px}.page-wrap{padding:36px 16px 60px}.section-block{padding:22px 18px}}
+    .footer-links{margin-bottom:8px}
+    @media(max-width:768px){
+      .topbar{padding:12px 16px}
+      .page-wrap{padding:36px 16px 60px}
+      .section-block{padding:20px 16px}
+      .ndpr-banner{flex-direction:column;gap:8px}
+      .rights-grid{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
@@ -42,22 +62,41 @@
 <div class="page-wrap">
   <div class="page-badge">🔒 Legal</div>
   <h1>Privacy Policy</h1>
-  <p class="last-updated">Last updated: May 2026</p>
+  <p class="last-updated">Last updated: January 2025</p>
+
+  <!-- NDPR compliance banner -->
+  <div class="ndpr-banner">
+    <div class="icon">🇳🇬</div>
+    <p><strong>NDPA 2023 Compliance.</strong> This Privacy Policy is prepared in accordance with the <strong>Nigeria Data Protection Act 2023 (NDPA)</strong> and the Nigeria Data Protection Regulation (NDPR) issued by the Nigeria Data Protection Bureau (NDPB). As a Nigerian platform serving Nigerian users, we are committed to full compliance with these regulations.</p>
+  </div>
 
   <div class="section-block">
     <h2>👋 Who We Are</h2>
-    <p>PrecisionTest is an online assessment practice platform designed to help Nigerian job seekers and applicants prepare for aptitude and numerical reasoning tests. We are committed to protecting your personal information and being transparent about how we use it.</p>
+    <p>PrecisionTest is an online assessment practice platform designed to help Nigerian job seekers and applicants prepare for aptitude and numerical reasoning tests. We act as a <strong>Data Controller</strong> under the NDPA 2023, meaning we determine how and why your personal data is processed.</p>
+    <p>We are committed to protecting your personal information, being transparent about how we use it, and giving you full control over it.</p>
   </div>
 
   <div class="section-block">
     <h2>📋 What We Collect</h2>
     <p>We collect only the minimum information necessary to provide our service:</p>
     <ul>
-      <li><strong>Email address</strong> — used to identify your account and save your access</li>
-      <li><strong>Usage data</strong> — pages visited and features used, collected anonymously</li>
-      <li><strong>Device information</strong> — browser type and screen size for optimising your experience</li>
+      <li><strong>Email address</strong> — used to identify your account and allow you to sign in</li>
+      <li><strong>Session data</strong> — stored locally in your browser to keep you logged in for up to 30 minutes</li>
+      <li><strong>Usage data</strong> — pages visited and features used, collected anonymously to improve the platform</li>
+      <li><strong>Device information</strong> — browser type and screen size for display optimisation</li>
     </ul>
-    <p>We do not collect your name, phone number, location, or payment information through this platform.</p>
+    <p>We do not collect your name, phone number, physical address, financial information, or any sensitive personal data as defined under the NDPA 2023.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>⚖️ Legal Basis for Processing</h2>
+    <p>Under the NDPA 2023, we process your data on the following legal bases:</p>
+    <ul>
+      <li><strong>Consent</strong> — by entering your email and clicking "Continue", you consent to us storing and processing your email address</li>
+      <li><strong>Contract performance</strong> — processing is necessary to provide the service you signed up for</li>
+      <li><strong>Legitimate interests</strong> — anonymous usage analytics help us improve the platform without affecting your rights</li>
+    </ul>
+    <p>You may withdraw your consent at any time by contacting us or requesting account deletion.</p>
   </div>
 
   <div class="section-block">
@@ -66,51 +105,126 @@
     <ul>
       <li>Create and identify your PrecisionTest account</li>
       <li>Allow you to sign back in without a password</li>
-      <li>Send occasional product updates (only if you opt in)</li>
+      <li>Send occasional product updates (only if you explicitly opt in)</li>
     </ul>
-    <p>We do not sell, rent, or share your personal data with third parties for marketing purposes.</p>
+    <p>We do not sell, rent, trade, or share your personal data with third parties for marketing purposes. Ever.</p>
   </div>
 
   <div class="section-block">
-    <h2>🗄️ Data Storage</h2>
-    <p>Your data is stored securely using Supabase, a trusted cloud database provider with industry-standard encryption. Your email is stored in an access-controlled database and is never exposed publicly.</p>
-    <p>Session data (your login status) is stored locally in your browser and automatically expires after 30 minutes of inactivity.</p>
+    <h2>🗄️ Data Storage & Security</h2>
+    <p>Your data is stored securely using <strong>Supabase</strong>, a trusted cloud infrastructure provider with AES-256 encryption at rest and TLS encryption in transit. Access to your data is strictly controlled and limited to authorised personnel only.</p>
+    <p>Session data is stored in your browser's local storage and automatically expires after 30 minutes. It is never transmitted to third parties.</p>
+    <p>While we take all reasonable technical and organisational measures to protect your data, no system is 100% secure. In the event of a data breach that affects your rights, we will notify you and the Nigeria Data Protection Bureau within 72 hours as required by law.</p>
   </div>
 
   <div class="section-block">
-    <h2>🍪 Cookies & Local Storage</h2>
-    <p>We use browser local storage (not traditional cookies) to maintain your login session. This data stays on your device and is cleared when your session expires or you sign out. We do not use tracking cookies or third-party advertising cookies.</p>
+    <h2>📅 Data Retention</h2>
+    <p>We retain your data only for as long as necessary. Here is our retention schedule:</p>
+    <table class="retention-table">
+      <thead>
+        <tr>
+          <th>Data Type</th>
+          <th>Retention Period</th>
+          <th>Reason</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Email address</td>
+          <td>Until you request deletion</td>
+          <td>Account identification</td>
+        </tr>
+        <tr>
+          <td>Session data (local storage)</td>
+          <td>30 minutes or until sign out</td>
+          <td>Login session management</td>
+        </tr>
+        <tr>
+          <td>Anonymous usage data</td>
+          <td>12 months</td>
+          <td>Platform improvement</td>
+        </tr>
+        <tr>
+          <td>Cookie consent record</td>
+          <td>Until browser data is cleared</td>
+          <td>Compliance record</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px">To request deletion of your data at any time, contact us at the address below.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>🍪 Local Storage & Cookies</h2>
+    <p>We use browser <strong>local storage</strong> (not traditional tracking cookies) for two purposes:</p>
+    <ul>
+      <li>Maintaining your 30-minute login session</li>
+      <li>Recording your cookie consent so we don't ask again</li>
+    </ul>
+    <p>We do not use advertising cookies, tracking pixels, or any third-party analytics that identify you personally. You will be shown a consent notice the first time you visit. You can clear your local storage at any time through your browser settings.</p>
+  </div>
+
+  <div class="section-block">
+    <h2>🌍 Third-Party Services</h2>
+    <p>We use the following third-party services to operate PrecisionTest:</p>
+    <ul>
+      <li><strong>Supabase</strong> — database and backend infrastructure (stores your email). Privacy policy at supabase.com/privacy</li>
+      <li><strong>Payment provider</strong> — for processing guide purchases. Their privacy policy applies to payment transactions</li>
+    </ul>
+    <p>These providers are contractually required to handle your data in compliance with applicable data protection laws.</p>
   </div>
 
   <div class="section-block">
     <h2>🧒 Children's Privacy</h2>
-    <p>PrecisionTest is intended for users aged 16 and above. We do not knowingly collect data from children under 16. If you believe a child has provided us with their email, please contact us and we will delete it promptly.</p>
+    <p>PrecisionTest is intended for users aged 16 and above. We do not knowingly collect personal data from anyone under 16. If you believe a child has registered on the platform, please contact us immediately and we will delete the account without delay.</p>
   </div>
 
   <div class="section-block">
-    <h2>✋ Your Rights</h2>
-    <p>You have the right to:</p>
-    <ul>
-      <li>Request access to the data we hold about you</li>
-      <li>Request deletion of your account and data</li>
-      <li>Withdraw consent at any time by contacting us</li>
-    </ul>
-    <p>To exercise any of these rights, contact us using the details below.</p>
+    <h2>✋ Your Rights Under NDPA 2023</h2>
+    <p>As a data subject under Nigerian law, you have the following rights:</p>
+    <div class="rights-grid">
+      <div class="right-item">
+        <strong>✅ Right to Access</strong>
+        <span>Request a copy of all personal data we hold about you</span>
+      </div>
+      <div class="right-item">
+        <strong>✏️ Right to Rectification</strong>
+        <span>Request correction of inaccurate or incomplete data</span>
+      </div>
+      <div class="right-item">
+        <strong>🗑️ Right to Erasure</strong>
+        <span>Request deletion of your account and all associated data</span>
+      </div>
+      <div class="right-item">
+        <strong>⛔ Right to Object</strong>
+        <span>Object to processing based on legitimate interests</span>
+      </div>
+      <div class="right-item">
+        <strong>📦 Right to Portability</strong>
+        <span>Request your data in a portable, machine-readable format</span>
+      </div>
+      <div class="right-item">
+        <strong>↩️ Right to Withdraw Consent</strong>
+        <span>Withdraw consent at any time without affecting past processing</span>
+      </div>
+    </div>
+    <p style="margin-top:16px">To exercise any of these rights, contact us at the email below. We will respond within <strong>30 days</strong> as required by the NDPA 2023. If you are unsatisfied with our response, you have the right to lodge a complaint with the <strong>Nigeria Data Protection Bureau (NDPB)</strong> at ndpb.gov.ng.</p>
   </div>
 
   <div class="section-block">
     <h2>🔄 Changes to This Policy</h2>
-    <p>We may update this Privacy Policy from time to time. When we do, we will update the "Last updated" date at the top of this page. Continued use of PrecisionTest after changes constitutes acceptance of the updated policy.</p>
+    <p>We may update this Privacy Policy from time to time to reflect changes in law or our practices. When we make significant changes, we will update the "Last updated" date at the top of this page. Continued use of PrecisionTest after changes constitutes acceptance of the updated policy.</p>
   </div>
 
   <div class="contact-box">
-    <p>Questions about your privacy? We're happy to help.</p>
+    <p>Questions, requests, or complaints about your privacy?</p>
     <a href="mailto:privacy@precisiontest.ng">privacy@precisiontest.ng</a>
+    <p style="margin-top:12px;font-size:0.82rem">We respond to all data requests within 30 days as required by NDPA 2023.</p>
   </div>
 </div>
 
 <footer>
-  <div style="margin-bottom:8px">
+  <div class="footer-links">
     <a href="index.html">Home</a>
     <a href="privacy.html">Privacy Policy</a>
     <a href="terms.html">Terms of Use</a>
@@ -119,4 +233,4 @@
 </footer>
 
 </body>
-                                                                             </html>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>.L.E.V.I — PrecisionTest</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #1a1a2e;
+      --accent:  #e94560;
+      --gold:    #f5a623;
+      --success: #10b981;
+      --text:    #2d2d2d;
+      --muted:   #6b7280;
+      --border:  #e5e7eb;
+      --light:   #f0f4ff;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f7f8fc;
+      min-height: 100vh;
+      color: var(--text);
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--primary);
+      padding: 14px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo { font-size: 1.3rem; font-weight: 800; color: #fff; }
+    .logo span { color: var(--accent); }
+    .levi-title {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+    }
+
+    /* ── MAIN WRAP ── */
+    .page-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 50px 24px 80px;
+    }
+
+    /* ── DOWNLOAD CARD ── */
+    .download-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 44px 36px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.09);
+      border: 1px solid var(--border);
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .download-icon {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05));
+      border: 2px solid rgba(16,185,129,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      margin: 0 auto 22px;
+      animation: pulse-ring 2s infinite;
+    }
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.3); }
+      70%  { box-shadow: 0 0 0 14px rgba(16,185,129,0); }
+      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    }
+    .download-card h2 {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .download-card .sub {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .dl-progress-wrap {
+      background: var(--border);
+      border-radius: 50px;
+      height: 10px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .dl-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--success), #34d399);
+      border-radius: 50px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+    .dl-status {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+      min-height: 20px;
+    }
+    .dl-status strong { color: var(--success); }
+
+    /* ── STATUS STATES ── */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+    .status-badge.downloading {
+      background: rgba(16,185,129,0.1);
+      color: var(--success);
+      border: 1px solid rgba(16,185,129,0.3);
+    }
+    .status-badge.done {
+      background: rgba(16,185,129,0.15);
+      color: var(--success);
+      border: 1px solid rgba(16,185,129,0.4);
+    }
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(16,185,129,0.3);
+      border-top-color: var(--success);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── NOTICE CARD ── */
+    .notice-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 36px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--accent);
+    }
+    .notice-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .notice-icon {
+      width: 44px; height: 44px;
+      background: rgba(233,69,96,0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .notice-header h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .notice-body p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+    .notice-body p:last-child { margin-bottom: 0; }
+    .notice-body strong { color: var(--text); }
+    .notice-agree {
+      margin-top: 22px;
+      padding: 14px 18px;
+      background: rgba(233,69,96,0.05);
+      border: 1px solid rgba(233,69,96,0.2);
+      border-radius: 12px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0d0d1a;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 22px 20px;
+      font-size: 0.82rem;
+    }
+    footer span { color: var(--accent); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .topbar       { padding: 12px 16px; }
+      .page-wrap    { padding: 32px 16px 60px; }
+      .download-card{ padding: 32px 22px; }
+      .notice-card  { padding: 26px 20px; }
+    }
+    @media (max-width: 480px) {
+      .levi-title { display: none; }
+      .download-card h2 { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Precision<span>Test</span></div>
+  <div class="levi-title">.L.E.V.I</div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- DOWNLOAD CARD -->
+  <div class="download-card">
+    <div class="download-icon">⬇️</div>
+    <h2>Your Video Is Downloading</h2>
+    <p class="sub">Please do not close this page. Your exclusive guide video is being prepared and downloaded to your device automatically.</p>
+
+    <div class="dl-progress-wrap">
+      <div class="dl-progress-fill" id="progressFill"></div>
+    </div>
+    <div class="dl-status" id="dlStatus">Starting download...</div>
+
+    <div class="status-badge downloading" id="statusBadge">
+      <div class="spinner" id="spinner"></div>
+      <span id="statusText">Downloading...</span>
+    </div>
+  </div>
+
+  <!-- IMPORTANT NOTICE -->
+  <div class="notice-card">
+    <div class="notice-header">
+      <div class="notice-icon">⚠️</div>
+      <h3>Important Notice</h3>
+    </div>
+    <div class="notice-body">
+      <p>This video has been provided to you exclusively because you have purchased and hold the rights to access this material.</p>
+      <p><strong>Please do not share this video with others.</strong></p>
+      <p>Sharing this content — whether the video file, this document, or any portion of its contents — could seriously jeopardize the integrity of assessments used by companies and worsen how evaluations are conducted in the future. Unauthorized distribution undermines the fairness of the process for all candidates.</p>
+      <p>By accessing this material, you agree to keep it strictly confidential and for your personal use only.</p>
+    </div>
+    <div class="notice-agree">
+      🔒 By remaining on this page, you confirm that you are the authorized purchaser and agree to these terms of confidentiality.
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2025 <span>PrecisionTest</span> — Authorized access only.</p>
+</footer>
+
+<script>
+  // ── Check referrer — must come from pay.html ──
+  function isFromPayPage() {
+    const ref = document.referrer;
+    // Allow if referrer contains pay.html or is same origin with pay.html
+    return ref.includes('pay.html');
+  }
+
+  // ── Simulate animated download progress ──
+  function animateProgress(onComplete) {
+    const fill   = document.getElementById('progressFill');
+    const status = document.getElementById('dlStatus');
+    let   pct    = 0;
+
+    const messages = [
+      { at: 0,   msg: 'Connecting to server...' },
+      { at: 15,  msg: 'Preparing your file...' },
+      { at: 35,  msg: 'Downloading video...' },
+      { at: 60,  msg: 'Almost there...' },
+      { at: 85,  msg: 'Finalising download...' },
+      { at: 100, msg: '<strong>Download complete!</strong>' },
+    ];
+
+    const interval = setInterval(() => {
+      pct += Math.random() * 3 + 1;
+      if (pct >= 100) {
+        pct = 100;
+        clearInterval(interval);
+        onComplete();
+      }
+
+      fill.style.width = pct + '%';
+
+      // Update status message
+      const match = [...messages].reverse().find(m => pct >= m.at);
+      if (match) status.innerHTML = match.msg;
+
+    }, 120);
+  }
+
+  // ── Trigger actual download ──
+  function triggerDownload() {
+    // ── REPLACE THIS URL WITH YOUR ACTUAL VIDEO FILE URL ──
+    const VIDEO_URL = 'YOUR_VIDEO_FILE_URL_HERE';
+
+    const a = document.createElement('a');
+    a.href     = VIDEO_URL;
+    a.download = 'LEVI_Assessment_Guide.mp4';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  // ── Mark download done ──
+  function markDone() {
+    const badge  = document.getElementById('statusBadge');
+    const spinner= document.getElementById('spinner');
+    const text   = document.getElementById('statusText');
+
+    spinner.style.display = 'none';
+    badge.classList.remove('downloading');
+    badge.classList.add('done');
+    text.textContent = '✅ Download complete — check your downloads folder';
+  }
+
+  // ── Main logic ──
+  if (!isFromPayPage()) {
+    // Not coming from pay.html — redirect immediately
+    window.location.href = 'pay.html';
+  } else {
+    // Coming from pay.html — start download flow
+    window.addEventListener('DOMContentLoaded', () => {
+      // Small delay then trigger real download
+      setTimeout(() => {
+        triggerDownload();
+      }, 800);
+
+      // Animate the progress bar UI
+      animateProgress(() => {
+        markDone();
+      });
+    });
+  }
+</script>
+
+</body>
+  </html>

@@ -5,7 +5,7 @@ const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ── Session: 30 minutes in ms ──
-const SESSION_DURATION = 30 * 60 * 1000;
+const SESSION_DURATION = 60 * 60 * 1000;
 let sessionInterval = null;
 
 // ── On page load — check existing session ──

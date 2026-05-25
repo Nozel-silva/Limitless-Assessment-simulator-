@@ -1,60 +1,47 @@
-// ── Session guard ──
-const SESSION_DURATION = 60 * 60 * 1000;
-let sessionInterval = null;
+// ── Inactivity timeout ──
+const INACTIVITY_LIMIT = 30 * 60 * 1000;
+let inactivityTimer = null;
 
-function checkSession() {
-  const email     = localStorage.getItem('pt_current_user');
-  const expiresAt = parseInt(localStorage.getItem('pt_session_expires') || '0');
-  if (!email || expiresAt <= Date.now()) {
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
     localStorage.removeItem('pt_current_user');
-    localStorage.removeItem('pt_session_expires');
+    alert('⏰ You have been signed out due to inactivity.');
+    window.location.href = 'index.html';
+  }, INACTIVITY_LIMIT);
+}
+
+function startInactivityWatcher() {
+  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click']
+    .forEach(evt => document.addEventListener(evt, resetInactivityTimer));
+  resetInactivityTimer();
+}
+
+// ── Session guard ──
+function checkSession() {
+  const email = localStorage.getItem('pt_current_user');
+  if (!email) {
     window.location.href = 'index.html';
     return;
   }
   document.getElementById('profileEmail').textContent = email;
-  startSessionCountdown(expiresAt);
-}
-
-function startSessionCountdown(expiresAt) {
-  clearInterval(sessionInterval);
-  updateCountdown(expiresAt);
-  sessionInterval = setInterval(() => {
-    const remaining = expiresAt - Date.now();
-    if (remaining <= 0) {
-      clearInterval(sessionInterval);
-      localStorage.removeItem('pt_current_user');
-      localStorage.removeItem('pt_session_expires');
-      alert('⏰ Your session has expired. Please sign in again.');
-      window.location.href = 'index.html';
-    } else {
-      updateCountdown(expiresAt);
-    }
-  }, 1000);
-}
-
-function updateCountdown(expiresAt) {
-  const remaining = Math.max(0, expiresAt - Date.now());
-  const m = Math.floor(remaining / 60000).toString().padStart(2, '0');
-  const s = Math.floor((remaining % 60000) / 1000).toString().padStart(2, '0');
-  const el = document.getElementById('sessionTimer');
-  if (el) el.textContent = `${m}:${s}`;
+  startInactivityWatcher();
 }
 
 function logout() {
-  clearInterval(sessionInterval);
+  clearTimeout(inactivityTimer);
   localStorage.removeItem('pt_current_user');
-  localStorage.removeItem('pt_session_expires');
   window.location.href = 'index.html';
 }
 
 // ── State ──
-let parsedQuestions = [];
-let currentQ        = 0;
-let answers         = [];
+let parsedQuestions   = [];
+let currentQ          = 0;
+let answers           = [];
 let testTimerInterval = null;
-let secondsLeft     = 0;
-let startTime       = null;
-let customMinutes   = 30;
+let secondsLeft       = 0;
+let startTime         = null;
+let customMinutes     = 30;
 
 // ── DOM ready ──
 document.addEventListener('DOMContentLoaded', () => {
@@ -148,12 +135,10 @@ async function processFile(file) {
 // ── Smart Question Parser ──
 function parseQuestions(raw) {
   const questions = [];
-
   let text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   text = text.replace(/^\s*page\s*\d+\s*$/gim, '');
 
   const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-
   let i = 0;
 
   while (i < lines.length) {
@@ -181,17 +166,8 @@ function parseQuestions(raw) {
         ? l.match(/^[-•*]\s+(.+)/)
         : null;
 
-      if (optLetterMatch) {
-        options.push(optLetterMatch[2].trim());
-        i++;
-        continue;
-      }
-
-      if (optBulletMatch) {
-        options.push(optBulletMatch[1].trim());
-        i++;
-        continue;
-      }
+      if (optLetterMatch) { options.push(optLetterMatch[2].trim()); i++; continue; }
+      if (optBulletMatch) { options.push(optBulletMatch[1].trim()); i++; continue; }
 
       const ansMatch = l.match(/^(?:answer|ans|correct\s*answer|key)[.):]\s*([A-Ea-e\d])/i);
       if (ansMatch) {
@@ -211,9 +187,7 @@ function parseQuestions(raw) {
         l.match(/^(?:Q\.?\s*)?\d+[.)]\s+/) ||
         l.match(/^(?:Question\s+\d+)/i) ||
         (l.endsWith('?') && l.length > 10 && options.length >= 2)
-      ) {
-        break;
-      }
+      ) { break; }
 
       if (options.length > 0) break;
       i++;
@@ -331,6 +305,203 @@ function updateTimerDisplay() {
 function renderQuestion() {
   const q       = parsedQuestions[currentQ];
   const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+  document.getElementById('qNum').textContent     = `Question ${currentQ + 1}`;
+  document.getElementById('qCurrent').textContent = currentQ + 1;
+  document.getElementById('qText').textContent    = q.question;
+  document.getElementById('progressFill').style.width =
+    `${(currentQ / parsedQuestions.length) * 100}%`;
+
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+
+  q.options.forEach((opt, i) => {
+    const btn     = document.createElement('button');
+    btn.className = 'option-btn' + (answers[currentQ] === i ? ' selected' : '');
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span>${opt}`;
+    btn.onclick   = () => selectAnswer(i);
+    container.appendChild(btn);
+  });
+
+  const nextBtn       = document.getElementById('nextBtn');
+  nextBtn.disabled    = answers[currentQ] === null;
+  nextBtn.textContent = currentQ === parsedQuestions.length - 1 ? 'Finish ✓' : 'Next →';
+}
+
+function selectAnswer(idx) {
+  answers[currentQ] = idx;
+  document.querySelectorAll('.option-btn').forEach((btn, i) => {
+    btn.classList.toggle('selected', i === idx);
+  });
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function skipQuestion() {
+  answers[currentQ] = null;
+  nextQuestion();
+}
+
+function nextQuestion() {
+  if (currentQ < parsedQuestions.length - 1) {
+    currentQ++;
+    const card = document.getElementById('qCard');
+    card.style.animation = 'none';
+    void card.offsetWidth;
+    card.style.animation = '';
+    renderQuestion();
+  } else {
+    submitTest();
+  }
+}
+
+function confirmSubmit() {
+  if (confirm('Are you sure you want to submit the test now?')) submitTest();
+}
+
+function autoSubmit() {
+  alert('⏰ Time is up! Your test has been submitted automatically.');
+  submitTest();
+}
+
+// ── Submit & results ──
+function submitTest() {
+  clearInterval(testTimerInterval);
+  const timeUsed = Math.floor((Date.now() - startTime) / 1000);
+  const usedMins = Math.floor(timeUsed / 60);
+  const usedSecs = timeUsed % 60;
+
+  let correct = 0, wrong = 0, skipped = 0, noKey = 0;
+
+  parsedQuestions.forEach((q, i) => {
+    if      (answers[i] === null)      skipped++;
+    else if (q.answer === null)        noKey++;
+    else if (answers[i] === q.answer)  correct++;
+    else                               wrong++;
+  });
+
+  const gradeable = parsedQuestions.length - noKey;
+  const pct       = gradeable > 0 ? Math.round((correct / gradeable) * 100) : null;
+
+  const ring = document.getElementById('scoreRing');
+  if (pct === null) {
+    ring.className = 'score-ring none';
+    document.getElementById('scoreNum').textContent = `${parsedQuestions.length - skipped}`;
+    document.getElementById('scorePct').textContent = 'answered';
+  } else {
+    ring.className = 'score-ring ' + (pct >= 70 ? 'great' : pct >= 50 ? 'good' : 'poor');
+    document.getElementById('scoreNum').textContent = `${correct}/${gradeable}`;
+    document.getElementById('scorePct').textContent = `${pct}%`;
+  }
+
+  let emoji, title, sub;
+  if      (pct === null) { emoji = '📋'; title = 'Test Complete!';   sub = 'No answer keys found — review your responses below.'; }
+  else if (pct >= 80)    { emoji = '🏆'; title = 'Outstanding!';     sub = "You're well prepared. Keep it up!"; }
+  else if (pct >= 60)    { emoji = '👍'; title = 'Good Job!';         sub = "Solid performance. A little more and you'll ace it."; }
+  else if (pct >= 40)    { emoji = '📚'; title = 'Keep Practising!';  sub = "You're getting there. Review below and retake."; }
+  else                   { emoji = '💪'; title = "Don't Give Up!";     sub = "Every attempt makes you better. Try again!"; }
+
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultSub').textContent   = sub;
+  document.getElementById('rCorrect').textContent    = pct !== null ? correct : '—';
+  document.getElementById('rWrong').textContent      = pct !== null ? wrong   : '—';
+  document.getElementById('rSkipped').textContent    = skipped;
+  document.getElementById('rTime').textContent       = `${usedMins}m ${usedSecs}s`;
+
+  if (noKey > 0) {
+    const note = document.getElementById('noAnswerNote');
+    note.textContent = `ℹ️ ${noKey} question${noKey > 1 ? 's' : ''} had no answer key and ${noKey > 1 ? 'were' : 'was'} excluded from scoring.`;
+    note.classList.add('visible');
+  }
+
+  buildReview();
+  showScreen('resultsScreen');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function buildReview() {
+  const list    = document.getElementById('reviewList');
+  const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+  list.innerHTML = '';
+
+  parsedQuestions.forEach((q, i) => {
+    const userAns   = answers[i];
+    const isSkipped = userAns === null;
+    const noKey     = q.answer === null;
+    const isCorrect = !isSkipped && !noKey && userAns === q.answer;
+
+    const cls = isSkipped ? 'skipped-r'
+              : noKey     ? 'no-ans-r'
+              : isCorrect ? 'correct-r'
+              :              'wrong-r';
+
+    const item = document.createElement('div');
+    item.className = `review-item ${cls}`;
+
+    let html = `<div class="review-q">Q${i + 1}. ${q.question}</div><div class="review-answers">`;
+
+    if (isSkipped) {
+      html += `<div class="review-ans skipped-ans">⏭ Skipped</div>`;
+      if (!noKey) html += `<div class="review-ans correct-ans">✅ Correct: ${letters[q.answer]}. ${q.options[q.answer]}</div>`;
+    } else if (noKey) {
+      html += `<div class="review-ans no-ans">📝 Your answer: ${letters[userAns]}. ${q.options[userAns]}</div>`;
+      html += `<div class="review-ans no-ans">⚠️ No answer key provided</div>`;
+    } else if (isCorrect) {
+      html += `<div class="review-ans your-ans ok">✅ ${letters[userAns]}. ${q.options[userAns]}</div>`;
+    } else {
+      html += `<div class="review-ans your-ans">❌ Your answer: ${letters[userAns]}. ${q.options[userAns]}</div>`;
+      html += `<div class="review-ans correct-ans">✅ Correct: ${letters[q.answer]}. ${q.options[q.answer]}</div>`;
+    }
+
+    html += '</div>';
+    item.innerHTML = html;
+    list.appendChild(item);
+  });
+}
+
+// ── Navigation ──
+function retakeTest() {
+  currentQ    = 0;
+  answers     = new Array(parsedQuestions.length).fill(null);
+  secondsLeft = customMinutes * 60;
+  startTime   = Date.now();
+  document.getElementById('noAnswerNote').classList.remove('visible');
+  showScreen('testScreen');
+  renderQuestion();
+  startTestTimer();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToUpload() {
+  clearInterval(testTimerInterval);
+  document.getElementById('noAnswerNote').classList.remove('visible');
+  showScreen('uploadScreen');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function toggleGuide() {
+  const body  = document.getElementById('guideBody');
+  const arrow = document.getElementById('guideArrow');
+  const open  = body.classList.toggle('open');
+  arrow.textContent = open ? '▲' : '▼';
+}
+
+function showError(msg) {
+  const el = document.getElementById('parseError');
+  el.innerHTML = msg;
+  el.classList.add('visible');
+}
+
+function clearError() {
+  const el = document.getElementById('parseError');
+  el.innerHTML = '';
+  el.classList.remove('visible');
+} 'B', 'C', 'D', 'E', 'F'];
 
   document.getElementById('qNum').textContent     = `Question ${currentQ + 1}`;
   document.getElementById('qCurrent').textContent = currentQ + 1;

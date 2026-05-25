@@ -1,68 +1,48 @@
 // ── Supabase config ──
-const SUPABASE_URL      = 'https://ccmsjcnuyrngqxwrswfe.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNjbXNqY251eXJuZ3F4d3Jzd2ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2MjU2MjgsImV4cCI6MjA2NzIwMTYyOH0.dkjCo2bgDMf923VKESkyMLsULo7IhmsYb6r-4Dn6SRY ';
+const SUPABASE_URL = 'https://ccmsjcnuyrngqxwrswfe.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNjbXNqY251eXJuZ3F4d3Jzd2ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2MjU2MjgsImV4cCI6MjA2NzIwMTYyOH0.dkjCo2bgDMf923VKESkyMLsULo7IhmsYb6r-4Dn6SRY';
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ── Session: 30 minutes in ms ──
-const SESSION_DURATION = 60 * 60 * 1000;
-let sessionInterval = null;
+// ── Inactivity timeout — 30 mins ──
+const INACTIVITY_LIMIT = 30 * 60 * 1000;
+let inactivityTimer = null;
 
-// ── On page load — check existing session ──
-document.addEventListener('DOMContentLoaded', () => {
-  checkSession();
-});
-
-function checkSession() {
-  const email     = localStorage.getItem('pt_current_user');
-  const expiresAt = parseInt(localStorage.getItem('pt_session_expires') || '0');
-  const now       = Date.now();
-
-  if (email && expiresAt > now) {
-    showProfileChip(email, expiresAt);
-    document.getElementById('navGetStarted').style.display = 'none';
-  } else if (email) {
-    // Session expired
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
     clearSession();
+    alert('⏰ You have been signed out due to inactivity.');
+    window.location.href = 'index.html';
+  }, INACTIVITY_LIMIT);
+}
+
+function startInactivityWatcher() {
+  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click']
+    .forEach(evt => document.addEventListener(evt, resetInactivityTimer));
+  resetInactivityTimer();
+}
+
+// ── Session ──
+function checkSession() {
+  const email = localStorage.getItem('pt_current_user');
+  if (email) {
+    showProfileChip(email);
+    document.getElementById('navGetStarted').style.display = 'none';
+    startInactivityWatcher();
   }
 }
 
-function showProfileChip(email, expiresAt) {
+function showProfileChip(email) {
   const chip = document.getElementById('profileChip');
   chip.style.display = 'flex';
   document.getElementById('profileEmail').textContent = email;
   document.getElementById('navGetStarted').style.display = 'none';
-  startSessionCountdown(expiresAt);
-}
-
-function startSessionCountdown(expiresAt) {
-  clearInterval(sessionInterval);
-  updateCountdown(expiresAt);
-  sessionInterval = setInterval(() => {
-    const remaining = expiresAt - Date.now();
-    if (remaining <= 0) {
-      clearInterval(sessionInterval);
-      clearSession();
-      alert('⏰ Your session has expired. Please sign in again.');
-      location.reload();
-    } else {
-      updateCountdown(expiresAt);
-    }
-  }, 1000);
-}
-
-function updateCountdown(expiresAt) {
-  const remaining = Math.max(0, expiresAt - Date.now());
-  const m = Math.floor(remaining / 60000).toString().padStart(2, '0');
-  const s = Math.floor((remaining % 60000) / 1000).toString().padStart(2, '0');
-  const el = document.getElementById('sessionTimer');
-  if (el) el.textContent = `${m}:${s}`;
 }
 
 function clearSession() {
   localStorage.removeItem('pt_current_user');
-  localStorage.removeItem('pt_session_expires');
-  clearInterval(sessionInterval);
+  clearTimeout(inactivityTimer);
   const chip = document.getElementById('profileChip');
   if (chip) chip.style.display = 'none';
   const btn = document.getElementById('navGetStarted');
@@ -148,11 +128,7 @@ async function handleAuth() {
       statusMsg.textContent = '✅ Account created! Redirecting you to practice...';
     }
 
-    // Save session
-    const expiresAt = Date.now() + SESSION_DURATION;
     localStorage.setItem('pt_current_user', email);
-    localStorage.setItem('pt_session_expires', expiresAt.toString());
-
     setTimeout(() => { window.location.href = 'practice.html'; }, 1500);
 
   } catch (err) {
@@ -163,7 +139,6 @@ async function handleAuth() {
     submitBtn.textContent = 'Continue to Practice →';
   }
 }
-
 
 // ── Cookie consent ──
 function initCookieBanner() {
@@ -180,9 +155,8 @@ function acceptCookies() {
   document.getElementById('cookieBanner').classList.add('hidden');
 }
 
-// Call on DOM ready — add this inside your existing DOMContentLoaded
-// or just call it directly at the bottom of index.js
+// ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
-  initCookieBanner();
   checkSession();
+  initCookieBanner();
 });

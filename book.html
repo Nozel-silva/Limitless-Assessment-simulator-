@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Assessment Mastery Guide — PrecisionTest</title>
+  <title>Assessment Mastery Guide — L.A.S.T</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     :root{--primary:#1a1a2e;--accent:#e94560;--gold:#f5a623;--text:#2d2d2d;--muted:#6b7280;--border:#e5e7eb;--light:#f0f4ff;--success:#10b981}
@@ -98,7 +98,7 @@
 <body>
 
 <div class="topbar">
-  <div class="logo">Precision<span>Test</span></div>
+  <div class="logo">L.A.S<span>T</span></div>
   <a href="index.html" class="back-link">← Back to Home</a>
 </div>
 
@@ -246,6 +246,43 @@
   </div>
   <p>© 2025 <span>PrecisionTest</span> — All rights reserved.</p>
 </footer>
+<script>
+  const INACTIVITY_LIMIT = 30 * 60 * 1000;
+  let inactivityTimer = null;
 
+  function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(() => {
+      localStorage.removeItem('pt_current_user');
+      document.getElementById('profileChip').style.display = 'none';
+    }, INACTIVITY_LIMIT);
+  }
+
+  function startInactivityWatcher() {
+    ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click']
+      .forEach(evt => document.addEventListener(evt, resetInactivityTimer));
+    resetInactivityTimer();
+  }
+
+  function checkSession() {
+    const email = localStorage.getItem('pt_current_user');
+    const chip  = document.getElementById('profileChip');
+    if (email) {
+      chip.style.display = 'flex';
+      document.getElementById('profileEmail').textContent = email;
+      startInactivityWatcher();
+    } else {
+      chip.style.display = 'none';
+    }
+  }
+
+  function logout() {
+    clearTimeout(inactivityTimer);
+    localStorage.removeItem('pt_current_user');
+    window.location.href = 'index.html';
+  }
+
+  document.addEventListener('DOMContentLoaded', checkSession);
+  </script>
 </body>
 </html>

@@ -1,53 +1,40 @@
-// ── Session guard ──
-const SESSION_DURATION = 60 * 60 * 1000;
-let sessionInterval = null;
+// ── Inactivity timeout ──
+const INACTIVITY_LIMIT = 30 * 60 * 1000;
+let inactivityTimer = null;
 
-function checkSession() {
-  const email     = localStorage.getItem('pt_current_user');
-  const expiresAt = parseInt(localStorage.getItem('pt_session_expires') || '0');
-  if (!email || expiresAt <= Date.now()) {
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
     localStorage.removeItem('pt_current_user');
-    localStorage.removeItem('pt_session_expires');
+    alert('⏰ You have been signed out due to inactivity.');
+    window.location.href = 'index.html';
+  }, INACTIVITY_LIMIT);
+}
+
+function startInactivityWatcher() {
+  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click']
+    .forEach(evt => document.addEventListener(evt, resetInactivityTimer));
+  resetInactivityTimer();
+}
+
+// ── Session guard ──
+function checkSession() {
+  const email = localStorage.getItem('pt_current_user');
+  if (!email) {
     window.location.href = 'index.html';
     return;
   }
   document.getElementById('profileEmail').textContent = email;
-  startSessionCountdown(expiresAt);
-}
-
-function startSessionCountdown(expiresAt) {
-  clearInterval(sessionInterval);
-  updateCountdown(expiresAt);
-  sessionInterval = setInterval(() => {
-    const remaining = expiresAt - Date.now();
-    if (remaining <= 0) {
-      clearInterval(sessionInterval);
-      localStorage.removeItem('pt_current_user');
-      localStorage.removeItem('pt_session_expires');
-      alert('⏰ Your session has expired. Please sign in again.');
-      window.location.href = 'index.html';
-    } else {
-      updateCountdown(expiresAt);
-    }
-  }, 1000);
-}
-
-function updateCountdown(expiresAt) {
-  const remaining = Math.max(0, expiresAt - Date.now());
-  const m = Math.floor(remaining / 60000).toString().padStart(2, '0');
-  const s = Math.floor((remaining % 60000) / 1000).toString().padStart(2, '0');
-  const el = document.getElementById('sessionTimer');
-  if (el) el.textContent = `${m}:${s}`;
+  startInactivityWatcher();
 }
 
 function logout() {
-  clearInterval(sessionInterval);
+  clearTimeout(inactivityTimer);
   localStorage.removeItem('pt_current_user');
-  localStorage.removeItem('pt_session_expires');
   window.location.href = 'index.html';
 }
 
-// Run session check on load
+// Run on load
 checkSession();
 
 // ── State ──
@@ -218,7 +205,6 @@ function submitTest() {
   document.getElementById('rSkipped').textContent    = skipped;
   document.getElementById('rTime').textContent       = `${usedMins}m ${usedSecs}s`;
 
-  // Build review
   const reviewList = document.getElementById('reviewList');
   reviewList.innerHTML = '';
   const letters = ['A', 'B', 'C', 'D'];
@@ -267,4 +253,4 @@ function goToSelect() {
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-           }
+}

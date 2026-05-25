@@ -1,5 +1,5 @@
 // ── Session guard ──
-const SESSION_DURATION = 30 * 60 * 1000;
+const SESSION_DURATION = 60 * 60 * 1000;
 let sessionInterval = null;
 
 function checkSession() {

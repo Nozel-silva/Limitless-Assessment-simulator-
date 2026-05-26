@@ -271,6 +271,7 @@ body {
   padding: 0 22px 24px;
   border-top: 1px solid var(--border);
 }
+
 .guide-body.open { display: block; }
 .guide-body > p {
   color: var(--muted);

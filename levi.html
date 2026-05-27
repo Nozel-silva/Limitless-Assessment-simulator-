@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>.L.E.V.I — PrecisionTest</title>
+  <title>.L.E.V.I — L.A.S.T</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -48,98 +48,129 @@
       padding: 50px 24px 80px;
     }
 
+    /* ── DOWNLOAD CARDS GRID ── */
+    .download-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
     /* ── DOWNLOAD CARD ── */
     .download-card {
       background: #fff;
       border-radius: 20px;
-      padding: 44px 36px;
+      padding: 36px 28px;
       box-shadow: 0 8px 40px rgba(0,0,0,0.09);
       border: 1px solid var(--border);
       text-align: center;
-      margin-bottom: 28px;
     }
     .download-icon {
-      width: 80px; height: 80px;
+      width: 70px; height: 70px;
       border-radius: 50%;
-      background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05));
-      border: 2px solid rgba(16,185,129,0.3);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.2rem;
-      margin: 0 auto 22px;
-      animation: pulse-ring 2s infinite;
+      font-size: 2rem;
+      margin: 0 auto 18px;
     }
-    @keyframes pulse-ring {
+    .download-icon.video {
+      background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05));
+      border: 2px solid rgba(16,185,129,0.3);
+      animation: pulse-green 2s infinite;
+    }
+    .download-icon.pdf {
+      background: linear-gradient(135deg, rgba(233,69,96,0.15), rgba(233,69,96,0.05));
+      border: 2px solid rgba(233,69,96,0.3);
+      animation: pulse-red 2s infinite;
+    }
+    @keyframes pulse-green {
       0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.3); }
-      70%  { box-shadow: 0 0 0 14px rgba(16,185,129,0); }
+      70%  { box-shadow: 0 0 0 12px rgba(16,185,129,0); }
       100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
     }
+    @keyframes pulse-red {
+      0%   { box-shadow: 0 0 0 0 rgba(233,69,96,0.3); }
+      70%  { box-shadow: 0 0 0 12px rgba(233,69,96,0); }
+      100% { box-shadow: 0 0 0 0 rgba(233,69,96,0); }
+    }
     .download-card h2 {
-      font-size: 1.5rem;
+      font-size: 1.1rem;
       font-weight: 900;
       color: var(--primary);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .download-card .sub {
       color: var(--muted);
-      font-size: 0.92rem;
-      margin-bottom: 28px;
-      line-height: 1.6;
+      font-size: 0.82rem;
+      margin-bottom: 20px;
+      line-height: 1.5;
     }
 
     /* ── PROGRESS BAR ── */
     .dl-progress-wrap {
       background: var(--border);
       border-radius: 50px;
-      height: 10px;
-      margin-bottom: 12px;
+      height: 8px;
+      margin-bottom: 10px;
       overflow: hidden;
     }
     .dl-progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--success), #34d399);
       border-radius: 50px;
       width: 0%;
       transition: width 0.4s ease;
     }
+    .dl-progress-fill.video { background: linear-gradient(90deg, var(--success), #34d399); }
+    .dl-progress-fill.pdf   { background: linear-gradient(90deg, var(--accent), #f87171); }
+
     .dl-status {
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       color: var(--muted);
-      margin-bottom: 20px;
-      min-height: 20px;
+      margin-bottom: 14px;
+      min-height: 18px;
     }
     .dl-status strong { color: var(--success); }
+    .dl-status.pdf-status strong { color: var(--accent); }
 
-    /* ── STATUS STATES ── */
+    /* ── STATUS BADGE ── */
     .status-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 22px;
+      padding: 8px 18px;
       border-radius: 50px;
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       font-weight: 700;
-      margin-top: 8px;
     }
-    .status-badge.downloading {
+    .status-badge.downloading-green {
       background: rgba(16,185,129,0.1);
       color: var(--success);
       border: 1px solid rgba(16,185,129,0.3);
     }
-    .status-badge.done {
+    .status-badge.downloading-red {
+      background: rgba(233,69,96,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(233,69,96,0.3);
+    }
+    .status-badge.done-green {
       background: rgba(16,185,129,0.15);
       color: var(--success);
       border: 1px solid rgba(16,185,129,0.4);
     }
+    .status-badge.done-red {
+      background: rgba(233,69,96,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(233,69,96,0.3);
+    }
     .spinner {
-      width: 14px; height: 14px;
-      border: 2px solid rgba(16,185,129,0.3);
-      border-top-color: var(--success);
+      width: 12px; height: 12px;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       flex-shrink: 0;
     }
+    .spinner.green { border: 2px solid rgba(16,185,129,0.3); border-top-color: var(--success); }
+    .spinner.red   { border: 2px solid rgba(233,69,96,0.3);  border-top-color: var(--accent); }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── NOTICE CARD ── */
@@ -204,41 +235,60 @@
 
     /* ── MOBILE ── */
     @media (max-width: 768px) {
-      .topbar       { padding: 12px 16px; }
-      .page-wrap    { padding: 32px 16px 60px; }
-      .download-card{ padding: 32px 22px; }
-      .notice-card  { padding: 26px 20px; }
+      .topbar        { padding: 12px 16px; }
+      .page-wrap     { padding: 32px 16px 60px; }
+      .download-grid { grid-template-columns: 1fr; gap: 16px; }
+      .download-card { padding: 28px 20px; }
+      .notice-card   { padding: 26px 20px; }
     }
     @media (max-width: 480px) {
       .levi-title { display: none; }
-      .download-card h2 { font-size: 1.3rem; }
+      .download-card h2 { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="logo">Precision<span>Test</span></div>
+  <div class="logo">L.A.S<span>.T</span></div>
   <div class="levi-title">.L.E.V.I</div>
 </div>
 
 <div class="page-wrap">
 
-  <!-- DOWNLOAD CARD -->
-  <div class="download-card">
-    <div class="download-icon">⬇️</div>
-    <h2>Your Video Is Downloading</h2>
-    <p class="sub">Please do not close this page. Your exclusive guide video is being prepared and downloaded to your device automatically.</p>
+  <!-- DOWNLOAD CARDS -->
+  <div class="download-grid">
 
-    <div class="dl-progress-wrap">
-      <div class="dl-progress-fill" id="progressFill"></div>
+    <!-- VIDEO -->
+    <div class="download-card">
+      <div class="download-icon video">🎬</div>
+      <h2>Guide Video</h2>
+      <p class="sub">Your exclusive assessment guide video is downloading automatically.</p>
+      <div class="dl-progress-wrap">
+        <div class="dl-progress-fill video" id="videoProgressFill"></div>
+      </div>
+      <div class="dl-status" id="videoStatus">Starting download...</div>
+      <div class="status-badge downloading-green" id="videoBadge">
+        <div class="spinner green" id="videoSpinner"></div>
+        <span id="videoStatusText">Downloading...</span>
+      </div>
     </div>
-    <div class="dl-status" id="dlStatus">Starting download...</div>
 
-    <div class="status-badge downloading" id="statusBadge">
-      <div class="spinner" id="spinner"></div>
-      <span id="statusText">Downloading...</span>
+    <!-- PDF -->
+    <div class="download-card">
+      <div class="download-icon pdf">📄</div>
+      <h2>Guide Document</h2>
+      <p class="sub">Your exclusive assessment guide PDF is downloading automatically.</p>
+      <div class="dl-progress-wrap">
+        <div class="dl-progress-fill pdf" id="pdfProgressFill"></div>
+      </div>
+      <div class="dl-status pdf-status" id="pdfStatus">Starting download...</div>
+      <div class="status-badge downloading-red" id="pdfBadge">
+        <div class="spinner red" id="pdfSpinner"></div>
+        <span id="pdfStatusText">Downloading...</span>
+      </div>
     </div>
+
   </div>
 
   <!-- IMPORTANT NOTICE -->
@@ -265,27 +315,16 @@
 </footer>
 
 <script>
-  // ── Check referrer — must come from pay.html ──
+  // ── Check referrer ──
   function isFromPayPage() {
-    const ref = document.referrer;
-    // Allow if referrer contains pay.html or is same origin with pay.html
-    return ref.includes('https://paystack.shop/pay/pts');
+    return document.referrer.includes('https://paystack.shop/pay/pts');
   }
 
-  // ── Simulate animated download progress ──
-  function animateProgress(onComplete) {
-    const fill   = document.getElementById('progressFill');
-    const status = document.getElementById('dlStatus');
+  // ── Animate progress bar ──
+  function animateProgress(fillId, statusId, messages, onComplete) {
+    const fill   = document.getElementById(fillId);
+    const status = document.getElementById(statusId);
     let   pct    = 0;
-
-    const messages = [
-      { at: 0,   msg: 'Connecting to server...' },
-      { at: 15,  msg: 'Preparing your file...' },
-      { at: 35,  msg: 'Downloading video...' },
-      { at: 60,  msg: 'Almost there...' },
-      { at: 85,  msg: 'Finalising download...' },
-      { at: 100, msg: '<strong>Download complete!</strong>' },
-    ];
 
     const interval = setInterval(() => {
       pct += Math.random() * 3 + 1;
@@ -294,60 +333,83 @@
         clearInterval(interval);
         onComplete();
       }
-
       fill.style.width = pct + '%';
-
-      // Update status message
       const match = [...messages].reverse().find(m => pct >= m.at);
       if (match) status.innerHTML = match.msg;
-
     }, 120);
   }
 
-  // ── Trigger actual download ──
-  function triggerDownload() {
-    // ── REPLACE THIS URL WITH YOUR ACTUAL VIDEO FILE URL ──
-    const VIDEO_URL = 'practice.mp4';
-
-    const a = document.createElement('a');
-    a.href     = VIDEO_URL;
-    a.download = 'LEVI_Assessment_Guide.mp4';
+  // ── Trigger download ──
+  function triggerDownload(url, filename) {
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   }
 
-  // ── Mark download done ──
-  function markDone() {
-    const badge  = document.getElementById('statusBadge');
-    const spinner= document.getElementById('spinner');
-    const text   = document.getElementById('statusText');
-
+  // ── Mark done ──
+  function markDone(badgeId, spinnerId, textId, doneClass, doneText) {
+    const badge   = document.getElementById(badgeId);
+    const spinner = document.getElementById(spinnerId);
+    const text    = document.getElementById(textId);
     spinner.style.display = 'none';
-    badge.classList.remove('downloading');
-    badge.classList.add('done');
-    text.textContent = '✅ Download complete — check your downloads folder';
+    badge.className = `status-badge ${doneClass}`;
+    text.textContent = doneText;
   }
 
   // ── Main logic ──
   if (!isFromPayPage()) {
-    // Not coming from pay.html — redirect immediately
     window.location.href = 'https://paystack.shop/pay/pts';
   } else {
-    // Coming from pay.html — start download flow
     window.addEventListener('DOMContentLoaded', () => {
-      // Small delay then trigger real download
+
+      const videoMessages = [
+        { at: 0,   msg: 'Connecting to server...' },
+        { at: 15,  msg: 'Preparing video file...' },
+        { at: 35,  msg: 'Downloading video...' },
+        { at: 60,  msg: 'Almost there...' },
+        { at: 85,  msg: 'Finalising video...' },
+        { at: 100, msg: '<strong>Video download complete!</strong>' },
+      ];
+
+      const pdfMessages = [
+        { at: 0,   msg: 'Connecting to server...' },
+        { at: 20,  msg: 'Preparing PDF document...' },
+        { at: 45,  msg: 'Downloading PDF...' },
+        { at: 70,  msg: 'Almost there...' },
+        { at: 90,  msg: 'Finalising document...' },
+        { at: 100, msg: '<strong>PDF download complete!</strong>' },
+      ];
+
+      // ── Trigger video download ──
       setTimeout(() => {
-        triggerDownload();
+        triggerDownload('practice.mp4', 'LEVI_Assessment_Guide.mp4');
       }, 800);
 
-      // Animate the progress bar UI
-      animateProgress(() => {
-        markDone();
+      // ── Trigger PDF download (slight delay after video) ──
+      setTimeout(() => {
+        triggerDownload('Assessment.pdf', 'LEVI_Assessment_Guide.pdf');
+      }, 1800);
+
+      // ── Animate video progress ──
+      animateProgress('videoProgressFill', 'videoStatus', videoMessages, () => {
+        markDone('videoBadge', 'videoSpinner', 'videoStatusText',
+          'done-green', '✅ Video saved — check your downloads folder');
       });
+
+      // ── Animate PDF progress (starts slightly later) ──
+      setTimeout(() => {
+        animateProgress('pdfProgressFill', 'pdfStatus', pdfMessages, () => {
+          markDone('pdfBadge', 'pdfSpinner', 'pdfStatusText',
+            'done-red', '✅ PDF saved — check your downloads folder');
+        });
+      }, 1000);
+
     });
   }
 </script>
 
 </body>
-  </html>
+</html>

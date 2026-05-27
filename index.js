@@ -144,9 +144,7 @@ async function handleAuth() {
 function initCookieBanner() {
   const accepted = localStorage.getItem('pt_cookies_accepted');
   if (!accepted) {
-    document.getElementById('cookieBanner').classList.remove('hidden');
-  } else {
-    document.getElementById('cookieBanner').classList.add('hidden');
+    document.getElementById('cookieBanner').style.display = 'flex';
   }
 }
 

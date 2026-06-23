@@ -19,7 +19,7 @@
       <span class="session-timer" id="sessionTimer"></span>
       <button class="profile-logout" onclick="logout()">Sign Out</button>
     </div>
-    </div>
+  </div>
 </div>
 
 <!-- SCREEN 1: UPLOAD -->
@@ -89,7 +89,7 @@
       <div class="guide-body" id="guideBody">
         <p>Upload any <strong>.docx</strong> or <strong>.txt</strong> file containing questions. The parser will detect the structure automatically. All of these formats work:</p>
         <div class="guide-example">
-// Numbered with letters 
+// Numbered with letters
 1. What is the capital of Nigeria?
 A) Lagos  B) Abuja  C) Kano  D) Ibadan
 Answer: B
@@ -111,6 +111,7 @@ a. Earth   b. Venus   c. Mercury   d. Mars
           <li>Options can be on separate lines or on the same line</li>
           <li>Answer key is optional — include it for scoring, leave it out if not needed</li>
           <li>"Answer:", "Ans:", "Correct:" — any of these will be recognised</li>
+          <li>Images embedded in your Word document will display alongside their questions</li>
         </ul>
       </div>
     </div>
@@ -133,6 +134,12 @@ a. Earth   b. Venus   c. Mercury   d. Mars
     <div class="q-card" id="qCard">
       <div class="q-num" id="qNum">Question 1</div>
       <div class="q-text" id="qText">Loading...</div>
+
+      <!-- Question image — hidden when no image exists -->
+      <div class="q-image-wrap" id="qImageWrap" style="display:none">
+        <img class="q-image" id="qImage" src="" alt="Question image" />
+      </div>
+
       <div class="options" id="optionsContainer"></div>
       <div class="q-footer">
         <button class="skip-btn" onclick="skipQuestion()">Skip this question</button>
@@ -178,4 +185,4 @@ a. Earth   b. Venus   c. Mercury   d. Mars
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="upload.js"></script>
 </body>
-        </html>
+</html>

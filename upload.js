@@ -87,29 +87,44 @@ async function processFile(file) {
   showLoadingState('📄 Reading file...');
 
   try {
-    let rawText = '';
+    let questions = [];
 
     if (file.name.match(/\.(docx|doc)$/i)) {
+      // ── Use convertToHtml to preserve images ──
       const arrayBuffer = await file.arrayBuffer();
-      const result      = await mammoth.extractRawText({ arrayBuffer });
-      rawText           = result.value;
+
+      // Store images as base64 data URLs
+      const imageMap = {};
+
+      const result = await mammoth.convertToHtml(
+        { arrayBuffer },
+        {
+          convertImage: mammoth.images.imgElement((image) => {
+            return image.read('base64').then((base64) => {
+              const src = `data:${image.contentType};base64,${base64}`;
+              const id  = `img_${Object.keys(imageMap).length}`;
+              imageMap[id] = src;
+              return { src, 'data-img-id': id };
+            });
+          })
+        }
+      );
+
+      showLoadingState('🔍 Scanning for questions...');
+      await new Promise(r => setTimeout(r, 50));
+
+      questions = parseQuestionsFromHtml(result.value, imageMap);
+
     } else {
-      rawText = await file.text();
+      // Plain text — no images
+      const rawText = await file.text();
+      showLoadingState('🔍 Scanning for questions...');
+      await new Promise(r => setTimeout(r, 50));
+      questions = parseQuestions(rawText);
     }
-
-    if (!rawText.trim()) {
-      showError('❌ The file appears to be empty or could not be read.');
-      resetLoadingState();
-      return;
-    }
-
-    showLoadingState('🔍 Scanning for questions...');
-    await new Promise(r => setTimeout(r, 50));
-
-    const questions = parseQuestions(rawText);
 
     if (!questions || questions.length === 0) {
-      showError('❌ No questions could be found. Make sure your file has questions with A B C D options. Open the format guide below for examples.');
+      showError('❌ No questions could be found. Make sure your file has questions with A B C D options.');
       resetLoadingState();
       return;
     }
@@ -132,7 +147,111 @@ async function processFile(file) {
   }
 }
 
-// ── Smart Question Parser ──
+// ── Parse questions from HTML (docx with images) ──
+function parseQuestionsFromHtml(html, imageMap) {
+  const questions = [];
+
+  // Create a temporary DOM to parse the HTML
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+
+  // Get all block elements as an array
+  const blocks = Array.from(temp.querySelectorAll('p, h1, h2, h3, h4, li'));
+
+  let i = 0;
+
+  while (i < blocks.length) {
+    const block    = blocks[i];
+    const text     = block.innerText || block.textContent || '';
+    const trimmed  = text.trim();
+
+    // Check for image in this block
+    const imgEl    = block.querySelector('img');
+    const imgSrc   = imgEl ? imgEl.getAttribute('src') : null;
+
+    // Detect question line
+    const qMatch =
+      trimmed.match(/^(?:Q\.?\s*)?(\d+)[.)]\s+(.+)/) ||
+      trimmed.match(/^(?:Question\s+\d+[.):]?\s*)(.+)/i) ||
+      (trimmed.endsWith('?') && trimmed.length > 10 ? ['', '', trimmed] : null);
+
+    if (!qMatch) { i++; continue; }
+
+    const questionText = (qMatch[2] || qMatch[1] || trimmed).trim();
+    if (questionText.length < 5) { i++; continue; }
+
+    const options     = [];
+    let   answerIndex = null;
+    let   questionImg = imgSrc; // image on the question line itself
+    i++;
+
+    while (i < blocks.length) {
+      const b    = blocks[i];
+      const l    = (b.innerText || b.textContent || '').trim();
+      const bImg = b.querySelector('img');
+
+      // If block has an image and no text and we don't have a question image yet
+      if (bImg && !l && !questionImg) {
+        questionImg = bImg.getAttribute('src');
+        i++;
+        continue;
+      }
+
+      // Image attached to an option line
+      const optImgSrc = bImg ? bImg.getAttribute('src') : null;
+
+      const optLetterMatch = l.match(/^[\[(]?([A-Ea-e])[.)\]]\s+(.+)/);
+      const optBulletMatch = !optLetterMatch && options.length < 4
+        ? l.match(/^[-•*]\s+(.+)/)
+        : null;
+
+      if (optLetterMatch) {
+        options.push({ text: optLetterMatch[2].trim(), img: optImgSrc });
+        i++; continue;
+      }
+      if (optBulletMatch) {
+        options.push({ text: optBulletMatch[1].trim(), img: optImgSrc });
+        i++; continue;
+      }
+
+      const ansMatch = l.match(/^(?:answer|ans|correct\s*answer|key)[.):]\s*([A-Ea-e\d])/i);
+      if (ansMatch) {
+        const raw = ansMatch[1].toUpperCase();
+        if (/[A-E]/.test(raw)) {
+          answerIndex = raw.charCodeAt(0) - 65;
+        } else {
+          const num = parseInt(raw);
+          if (!isNaN(num) && num >= 1 && num <= 6) answerIndex = num - 1;
+        }
+        i++; continue;
+      }
+
+      if (
+        l === '' ||
+        l.match(/^(?:Q\.?\s*)?\d+[.)]\s+/) ||
+        l.match(/^(?:Question\s+\d+)/i) ||
+        (l.endsWith('?') && l.length > 10 && options.length >= 2)
+      ) { break; }
+
+      if (options.length > 0) break;
+      i++;
+    }
+
+    if (questionText && options.length >= 2) {
+      if (answerIndex !== null && answerIndex >= options.length) answerIndex = null;
+      questions.push({
+        question: questionText,
+        image:    questionImg || null,
+        options:  options,
+        answer:   answerIndex
+      });
+    }
+  }
+
+  return questions;
+}
+
+// ── Parse questions from plain text (no images) ──
 function parseQuestions(raw) {
   const questions = [];
   let text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
@@ -166,8 +285,8 @@ function parseQuestions(raw) {
         ? l.match(/^[-•*]\s+(.+)/)
         : null;
 
-      if (optLetterMatch) { options.push(optLetterMatch[2].trim()); i++; continue; }
-      if (optBulletMatch) { options.push(optBulletMatch[1].trim()); i++; continue; }
+      if (optLetterMatch) { options.push({ text: optLetterMatch[2].trim(), img: null }); i++; continue; }
+      if (optBulletMatch) { options.push({ text: optBulletMatch[1].trim(), img: null }); i++; continue; }
 
       const ansMatch = l.match(/^(?:answer|ans|correct\s*answer|key)[.):]\s*([A-Ea-e\d])/i);
       if (ansMatch) {
@@ -178,8 +297,7 @@ function parseQuestions(raw) {
           const num = parseInt(raw);
           if (!isNaN(num) && num >= 1 && num <= 6) answerIndex = num - 1;
         }
-        i++;
-        continue;
+        i++; continue;
       }
 
       if (
@@ -195,7 +313,7 @@ function parseQuestions(raw) {
 
     if (questionText && options.length >= 2) {
       if (answerIndex !== null && answerIndex >= options.length) answerIndex = null;
-      questions.push({ question: questionText, options, answer: answerIndex });
+      questions.push({ question: questionText, image: null, options, answer: answerIndex });
     }
   }
 
@@ -312,13 +430,33 @@ function renderQuestion() {
   document.getElementById('progressFill').style.width =
     `${(currentQ / parsedQuestions.length) * 100}%`;
 
+  // ── Show or hide question image ──
+  const qImgWrap = document.getElementById('qImageWrap');
+  const qImg     = document.getElementById('qImage');
+  if (q.image) {
+    qImg.src             = q.image;
+    qImgWrap.style.display = 'block';
+  } else {
+    qImgWrap.style.display = 'none';
+  }
+
   const container = document.getElementById('optionsContainer');
   container.innerHTML = '';
 
   q.options.forEach((opt, i) => {
     const btn     = document.createElement('button');
     btn.className = 'option-btn' + (answers[currentQ] === i ? ' selected' : '');
-    btn.innerHTML = `<span class="option-letter">${letters[i]}</span>${opt}`;
+
+    // Option text
+    let inner = `<span class="option-letter">${letters[i]}</span>`;
+    inner    += `<span class="option-text">${opt.text}</span>`;
+
+    // Option image if present
+    if (opt.img) {
+      inner += `<img class="option-img" src="${opt.img}" alt="Option ${letters[i]}" />`;
+    }
+
+    btn.innerHTML = inner;
     btn.onclick   = () => selectAnswer(i);
     container.appendChild(btn);
   });
@@ -438,19 +576,26 @@ function buildReview() {
     const item = document.createElement('div');
     item.className = `review-item ${cls}`;
 
-    let html = `<div class="review-q">Q${i + 1}. ${q.question}</div><div class="review-answers">`;
+    let html = `<div class="review-q">Q${i + 1}. ${q.question}</div>`;
+
+    // Show question image in review if present
+    if (q.image) {
+      html += `<img class="review-img" src="${q.image}" alt="Question ${i + 1} image" />`;
+    }
+
+    html += `<div class="review-answers">`;
 
     if (isSkipped) {
       html += `<div class="review-ans skipped-ans">⏭ Skipped</div>`;
-      if (!noKey) html += `<div class="review-ans correct-ans">✅ Correct: ${letters[q.answer]}. ${q.options[q.answer]}</div>`;
+      if (!noKey) html += `<div class="review-ans correct-ans">✅ Correct: ${letters[q.answer]}. ${q.options[q.answer].text}</div>`;
     } else if (noKey) {
-      html += `<div class="review-ans no-ans">📝 Your answer: ${letters[userAns]}. ${q.options[userAns]}</div>`;
+      html += `<div class="review-ans no-ans">📝 Your answer: ${letters[userAns]}. ${q.options[userAns].text}</div>`;
       html += `<div class="review-ans no-ans">⚠️ No answer key provided</div>`;
     } else if (isCorrect) {
-      html += `<div class="review-ans your-ans ok">✅ ${letters[userAns]}. ${q.options[userAns]}</div>`;
+      html += `<div class="review-ans your-ans ok">✅ ${letters[userAns]}. ${q.options[userAns].text}</div>`;
     } else {
-      html += `<div class="review-ans your-ans">❌ Your answer: ${letters[userAns]}. ${q.options[userAns]}</div>`;
-      html += `<div class="review-ans correct-ans">✅ Correct: ${letters[q.answer]}. ${q.options[q.answer]}</div>`;
+      html += `<div class="review-ans your-ans">❌ Your answer: ${letters[userAns]}. ${q.options[userAns].text}</div>`;
+      html += `<div class="review-ans correct-ans">✅ Correct: ${letters[q.answer]}. ${q.options[q.answer].text}</div>`;
     }
 
     html += '</div>';
@@ -461,44 +606,4 @@ function buildReview() {
 
 // ── Navigation ──
 function retakeTest() {
-  currentQ    = 0;
-  answers     = new Array(parsedQuestions.length).fill(null);
-  secondsLeft = customMinutes * 60;
-  startTime   = Date.now();
-  document.getElementById('noAnswerNote').classList.remove('visible');
-  showScreen('testScreen');
-  renderQuestion();
-  startTestTimer();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function goToUpload() {
-  clearInterval(testTimerInterval);
-  document.getElementById('noAnswerNote').classList.remove('visible');
-  showScreen('uploadScreen');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function toggleGuide() {
-  const body  = document.getElementById('guideBody');
-  const arrow = document.getElementById('guideArrow');
-  const open  = body.classList.toggle('open');
-  arrow.textContent = open ? '▲' : '▼';
-}
-
-function showError(msg) {
-  const el = document.getElementById('parseError');
-  el.innerHTML = msg;
-  el.classList.add('visible');
-}
-
-function clearError() {
-  const el = document.getElementById('parseError');
-  el.innerHTML = '';
-  el.classList.remove('visible');
-}
+  

@@ -163,9 +163,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-const { data: { user } } = await supabase.auth.getUser();
-
-await supabase
-  .from('users')
-  .update({ last_seen: new Date().toISOString() })
-  .eq('id', user.id);

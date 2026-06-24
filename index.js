@@ -4,12 +4,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const { data: { user } } = await supabase.auth.getUser();
 
-await supabase
-  .from('users')
-  .update({ last_seen: new Date().toISOString() })
-  .eq('id', user.id);
 // ── Inactivity timeout — 30 mins ──
 const INACTIVITY_LIMIT = 30 * 60 * 1000;
 let inactivityTimer = null;
@@ -164,3 +159,13 @@ document.addEventListener('DOMContentLoaded', () => {
   checkSession();
   initCookieBanner();
 });
+
+
+
+
+const { data: { user } } = await supabase.auth.getUser();
+
+await supabase
+  .from('users')
+  .update({ last_seen: new Date().toISOString() })
+  .eq('id', user.id);

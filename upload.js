@@ -1,3 +1,4 @@
+
 // ── Inactivity timeout ──
 const INACTIVITY_LIMIT = 30 * 60 * 1000;
 let inactivityTimer = null;
@@ -90,12 +91,10 @@ async function processFile(file) {
     let questions = [];
 
     if (file.name.match(/\.(docx|doc)$/i)) {
-      // ── Use convertToHtml to preserve images ──
       const arrayBuffer = await file.arrayBuffer();
+      const imageMap    = {};
 
-      // Store images as base64 data URLs
-      const imageMap = {};
-
+      // ── Use convertToHtml to preserve images ──
       const result = await mammoth.convertToHtml(
         { arrayBuffer },
         {
@@ -112,11 +111,9 @@ async function processFile(file) {
 
       showLoadingState('🔍 Scanning for questions...');
       await new Promise(r => setTimeout(r, 50));
-
       questions = parseQuestionsFromHtml(result.value, imageMap);
 
     } else {
-      // Plain text — no images
       const rawText = await file.text();
       showLoadingState('🔍 Scanning for questions...');
       await new Promise(r => setTimeout(r, 50));
@@ -124,7 +121,7 @@ async function processFile(file) {
     }
 
     if (!questions || questions.length === 0) {
-      showError('❌ No questions could be found. Make sure your file has questions with A B C D options.');
+      showError('❌ No questions could be found. Make sure your file has questions with A B C D options. Open the format guide below for examples.');
       resetLoadingState();
       return;
     }
@@ -150,55 +147,45 @@ async function processFile(file) {
 // ── Parse questions from HTML (docx with images) ──
 function parseQuestionsFromHtml(html, imageMap) {
   const questions = [];
+  const temp      = document.createElement('div');
+  temp.innerHTML  = html;
 
-  // Create a temporary DOM to parse the HTML
-  const temp = document.createElement('div');
-  temp.innerHTML = html;
-
-  // Get all block elements as an array
   const blocks = Array.from(temp.querySelectorAll('p, h1, h2, h3, h4, li'));
-
   let i = 0;
 
   while (i < blocks.length) {
-    const block    = blocks[i];
-    const text     = block.innerText || block.textContent || '';
-    const trimmed  = text.trim();
+    const block   = blocks[i];
+    const text    = (block.innerText || block.textContent || '').trim();
+    const imgEl   = block.querySelector('img');
+    const imgSrc  = imgEl ? imgEl.getAttribute('src') : null;
 
-    // Check for image in this block
-    const imgEl    = block.querySelector('img');
-    const imgSrc   = imgEl ? imgEl.getAttribute('src') : null;
-
-    // Detect question line
     const qMatch =
-      trimmed.match(/^(?:Q\.?\s*)?(\d+)[.)]\s+(.+)/) ||
-      trimmed.match(/^(?:Question\s+\d+[.):]?\s*)(.+)/i) ||
-      (trimmed.endsWith('?') && trimmed.length > 10 ? ['', '', trimmed] : null);
+      text.match(/^(?:Q\.?\s*)?(\d+)[.)]\s+(.+)/) ||
+      text.match(/^(?:Question\s+\d+[.):]?\s*)(.+)/i) ||
+      (text.endsWith('?') && text.length > 10 ? ['', '', text] : null);
 
     if (!qMatch) { i++; continue; }
 
-    const questionText = (qMatch[2] || qMatch[1] || trimmed).trim();
+    const questionText = (qMatch[2] || qMatch[1] || text).trim();
     if (questionText.length < 5) { i++; continue; }
 
     const options     = [];
     let   answerIndex = null;
-    let   questionImg = imgSrc; // image on the question line itself
+    let   questionImg = imgSrc;
     i++;
 
     while (i < blocks.length) {
       const b    = blocks[i];
       const l    = (b.innerText || b.textContent || '').trim();
       const bImg = b.querySelector('img');
+      const optImgSrc = bImg ? bImg.getAttribute('src') : null;
 
-      // If block has an image and no text and we don't have a question image yet
+      // Standalone image block with no text — attach to question
       if (bImg && !l && !questionImg) {
         questionImg = bImg.getAttribute('src');
         i++;
         continue;
       }
-
-      // Image attached to an option line
-      const optImgSrc = bImg ? bImg.getAttribute('src') : null;
 
       const optLetterMatch = l.match(/^[\[(]?([A-Ea-e])[.)\]]\s+(.+)/);
       const optBulletMatch = !optLetterMatch && options.length < 4
@@ -242,7 +229,7 @@ function parseQuestionsFromHtml(html, imageMap) {
       questions.push({
         question: questionText,
         image:    questionImg || null,
-        options:  options,
+        options,
         answer:   answerIndex
       });
     }
@@ -434,7 +421,7 @@ function renderQuestion() {
   const qImgWrap = document.getElementById('qImageWrap');
   const qImg     = document.getElementById('qImage');
   if (q.image) {
-    qImg.src             = q.image;
+    qImg.src               = q.image;
     qImgWrap.style.display = 'block';
   } else {
     qImgWrap.style.display = 'none';
@@ -447,11 +434,8 @@ function renderQuestion() {
     const btn     = document.createElement('button');
     btn.className = 'option-btn' + (answers[currentQ] === i ? ' selected' : '');
 
-    // Option text
-    let inner = `<span class="option-letter">${letters[i]}</span>`;
-    inner    += `<span class="option-text">${opt.text}</span>`;
-
-    // Option image if present
+    let inner  = `<span class="option-letter">${letters[i]}</span>`;
+    inner     += `<span class="option-text">${opt.text}</span>`;
     if (opt.img) {
       inner += `<img class="option-img" src="${opt.img}" alt="Option ${letters[i]}" />`;
     }
@@ -606,4 +590,16 @@ function buildReview() {
 
 // ── Navigation ──
 function retakeTest() {
-  
+  currentQ    = 0;
+  answers     = new Array(parsedQuestions.length).fill(null);
+  secondsLeft = customMinutes * 60;
+  startTime   = Date.now();
+  document.getElementById('noAnswerNote').classList.remove('visible');
+  showScreen('testScreen');
+  renderQuestion();
+  startTestTimer();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goTo 
+ 

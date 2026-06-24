@@ -118,9 +118,17 @@ async function handleAuth() {
     if (selectError) throw selectError;
 
     if (existing) {
-      statusMsg.className   = 'status-msg info';
-      statusMsg.textContent = '👋 Welcome back! Redirecting you to practice...';
-    } else {
+  // ── Update last_seen timestamp for returning user ──
+  const { error: updateError } = await db
+    .from('users')
+    .update({ last_seen: new Date().toISOString() })
+    .eq('email', email);
+
+  if (updateError) console.error('last_seen update failed:', updateError);
+
+  statusMsg.className   = 'status-msg info';
+  statusMsg.textContent = '👋 Welcome back! Redirecting you to practice...';
+} else {
       const { error: insertError } = await db
         .from('users')
         .insert({ email });

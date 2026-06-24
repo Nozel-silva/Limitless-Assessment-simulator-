@@ -601,5 +601,34 @@ function retakeTest() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function goTo 
+function goToUpload() {
+    clearInterval(testTimerInterval);
+    document.getElementById('noAnswerNote').classList.remove('visible');
+    showScreen('uploadScreen');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function toggleGuide() {
+    const body = document.getElementById('guideBody');
+    const arrow = document.getElementById('guideArrow');
+    const open = body.classList.toggle('open');
+    arrow.textContent = open ? '▲' : '▼';
+}
+
+function showError(msg) {
+    const el = document.getElementById('parseError');
+    el.innerHTML = msg;
+    el.classList.add('visible');
+}
+
+function clearError() {
+    const el = document.getElementById('parseError');
+    el.innerHTML = '';
+    el.classList.remove('visible');
+}
  

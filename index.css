@@ -670,10 +670,12 @@ footer span { color: var(--accent); }
 /* ── COOKIE BANNER ── */
 .cookie-banner {
   position: fixed;
-  bottom: 0; left: 0; right: 0;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
   background: #fff;
-  border-top: 2px solid var(--border);
-  box-shadow: 0 -4px 24px rgba(0,0,0,0.1);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.1);
   z-index: 9999;
   padding: 18px 40px;
   display: none;
@@ -681,7 +683,8 @@ footer span { color: var(--accent); }
   justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
-  transform: translateY(0);
+  max-width: 600px;
+  width: 90%;
   transition: transform 0.3s ease;
 }
 .cookie-banner.hidden {

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Standard Means — Assessment Guide | L.A.S.T</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+  <link rel="stylesheet" href="index.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--primary:#1a1a2e;--accent:#e94560;--gold:#f5a623;--text:#2d2d2d;--muted:#6b7280;--border:#e5e7eb;--light:#f0f4ff;--success:#10b981}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f8fc;color:var(--text);min-height:100vh}
+
+    /* TOPBAR */
+    .topbar{background:var(--primary);padding:14px 40px;display:flex;justify-content:space-between;align-items:center}
+    .logo{font-size:1.3rem;font-weight:800;color:#fff}
+    .logo span{color:var(--accent)}
+    .back-link{color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.88rem;transition:color 0.2s}
+    .back-link:hover{color:#fff}
+
+    /* HERO */
+    .std-hero{background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%);padding:70px 24px 60px;text-align:center;position:relative;overflow:hidden}
+    .std-hero::before{content:'';position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(245,166,35,0.1) 0%,transparent 70%);top:-100px;right:-100px;border-radius:50%}
+    .hero-inner{position:relative;z-index:1;max-width:640px;margin:0 auto}
+    .hero-badge{display:inline-block;background:rgba(245,166,35,0.2);border:1px solid rgba(245,166,35,0.4);color:var(--gold);padding:6px 18px;border-radius:50px;font-size:0.8rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
+    .std-hero h1{font-size:clamp(1.6rem,4.5vw,2.6rem);font-weight:900;color:#fff;line-height:1.25;margin-bottom:14px}
+    .std-hero .sub{color:rgba(255,255,255,0.7);font-size:clamp(0.9rem,2vw,1.05rem);line-height:1.7}
+
+    /* MAIN */
+    .page-wrap{max-width:720px;margin:0 auto;padding:60px 24px 80px}
+
+    .info-card{background:#fff;border-radius:20px;padding:36px 32px;box-shadow:0 8px 40px rgba(0,0,0,0.07);border:1px solid var(--border);margin-bottom:28px}
+    .info-card h2{font-size:1.3rem;font-weight:900;color:var(--primary);margin-bottom:16px}
+    .info-card p{color:var(--muted);font-size:0.95rem;line-height:1.75;margin-bottom:14px}
+    .info-card p:last-child{margin-bottom:0}
+
+    .benefit-list{list-style:none;margin:20px 0}
+    .benefit-list li{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+    .benefit-list li:last-child{border-bottom:none}
+    .benefit-icon{font-size:1.2rem;flex-shrink:0}
+    .benefit-text h3{font-size:0.95rem;font-weight:700;color:var(--primary);margin-bottom:3px}
+    .benefit-text p{color:var(--muted);font-size:0.85rem;line-height:1.55;margin:0}
+
+    /* DOWNLOAD CARD */
+    .download-card{background:#fff;border-radius:20px;padding:36px 28px;box-shadow:0 8px 40px rgba(0,0,0,0.09);border:1px solid var(--border);text-align:center}
+    .download-icon{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 16px;background:linear-gradient(135deg,rgba(245,166,35,0.15),rgba(245,166,35,0.05));border:2px solid rgba(245,166,35,0.3)}
+    .download-card h2{font-size:1.15rem;font-weight:900;color:var(--primary);margin-bottom:8px}
+    .download-card .sub{color:var(--muted);font-size:0.88rem;margin-bottom:24px;line-height:1.6}
+    .download-btn{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:#1a1a2e;border:none;padding:16px 40px;border-radius:50px;font-size:1rem;font-weight:800;cursor:pointer;transition:all 0.25s;box-shadow:0 8px 30px rgba(245,166,35,0.4);font-family:inherit}
+    .download-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(245,166,35,0.5)}
+    .download-note{margin-top:16px;color:var(--muted);font-size:0.78rem}
+    .effect-tag{display:inline-block;background:rgba(245,166,35,0.12);color:var(--gold);border:1px solid rgba(245,166,35,0.3);padding:6px 16px;border-radius:50px;font-size:0.78rem;font-weight:700;margin-bottom:18px}
+
+    /* FOOTER */
+    footer{background:#0d0d1a;color:rgba(255,255,255,0.4);text-align:center;padding:22px 20px;font-size:0.82rem}
+    footer a{color:rgba(255,255,255,0.4);text-decoration:none;margin:0 8px}
+    footer a:hover{color:var(--accent)}
+    footer span{color:var(--accent)}
+    .footer-links{margin-bottom:8px}
+
+    @media(max-width:768px){
+      .topbar{padding:12px 16px}
+      .std-hero{padding:50px 16px 44px}
+      .page-wrap{padding:40px 16px 60px}
+      .info-card{padding:28px 22px}
+      .download-card{padding:28px 20px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">L.A.S<span>.T</span></div>
+  <a href="index.html" class="back-link">← Back to Home</a>
+</div>
+
+<!-- HERO -->
+<section class="std-hero">
+  <div class="hero-inner">
+    <div class="hero-badge">📄 Standard Means</div>
+    <h1>Answer Faster. Pick the Right Option, Every Time.</h1>
+    <p class="sub">A focused reference guide built to sharpen your speed and accuracy when it matters most — during the actual test.</p>
+  </div>
+</section>
+
+<div class="page-wrap">
+
+  <!-- WHAT IT DOES -->
+  <div class="info-card">
+    <h2>How This Guide Helps You</h2>
+    <p>This document is built around one goal: helping you move through assessment questions quickly without second-guessing yourself, and land on the correct option more often.</p>
+
+    <ul class="benefit-list">
+      <li>
+        <span class="benefit-icon">⚡</span>
+        <div class="benefit-text">
+          <h3>Faster Question Reading</h3>
+          <p>Shows you how to scan a question and immediately know what it's actually testing, so you stop rereading and start answering.</p>
+        </div>
+      </li>
+      <li>
+        <span class="benefit-icon">🎯</span>
+        <div class="benefit-text">
+          <h3>Picking the Right Option</h3>
+          <p>Breaks down how to weigh answer choices against each other instead of guessing, so your picks are backed by logic, not luck.</p>
+        </div>
+      </li>
+      <li>
+        <span class="benefit-icon">🧭</span>
+        <div class="benefit-text">
+          <h3>Staying on Pace</h3>
+          <p>Gives you a simple rhythm to follow so you're never stuck too long on one question while the clock runs out on the rest.</p>
+        </div>
+      </li>
+    </ul>
+
+    <p>It's the standard route — steady, practical, and effective when you put in the reps. For a faster, higher-certainty path, the "Fastest Means" option is also available.</p>
+  </div>
+
+  <!-- DOWNLOAD -->
+  <div class="download-card">
+    <div class="download-icon">📥</div>
+    <div class="effect-tag">50% Effective</div>
+    <h2>Download the Standard Guide</h2>
+    <p class="sub">Click below to download your PDF and start practicing right away.</p>
+    <button class="download-btn" onclick="downloadStandardPDF()">
+      ⬇ Download PDF
+    </button>
+    <div class="download-note">PDF file · Opens in your device's downloads folder</div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+  </div>
+  <p>© 2025 <span>L.A.S.T</span> — All rights reserved.</p>
+</footer>
+
+<script>
+  function downloadStandardPDF() {
+    const a = document.createElement('a');
+    a.href = 'Standard.pdf';
+    a.download = 'LEVI_Standard_Guide.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+</script>
+
+<!-- COOKIE CONSENT BANNER -->
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cookie-content">
+    <span class="cookie-icon">🍪</span>
+    <p>We use cookies to manage your login session and keep you signed in. By continuing to use PrecisionTest, you accept this in line with our <a href="privacy.html" target="_blank">Privacy Policy</a> and Nigeria's Data Protection Act (NDPA 2023).</p>
+  </div>
+  <div class="cookie-actions">
+    <button class="cookie-accept" onclick="acceptCookies()">Accept & Continue</button>
+    <a href="privacy.html" class="cookie-learn">Learn More</a>
+  </div>
+</div>
+<script src="index.js"></script>
+</body>
+  </html>

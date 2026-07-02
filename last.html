@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>.L.E.V.I — L.A.S.T</title>
+  <title>L.A.S.T</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -48,14 +48,6 @@
       padding: 50px 24px 80px;
     }
 
-    /* ── DOWNLOAD CARDS GRID ── */
-    .download-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 28px;
-    }
-
     /* ── DOWNLOAD CARD ── */
     .download-card {
       background: #fff;
@@ -64,6 +56,8 @@
       box-shadow: 0 8px 40px rgba(0,0,0,0.09);
       border: 1px solid var(--border);
       text-align: center;
+      max-width: 380px;
+      margin: 0 auto 28px;
     }
     .download-icon {
       width: 70px; height: 70px;
@@ -79,20 +73,10 @@
       border: 2px solid rgba(16,185,129,0.3);
       animation: pulse-green 2s infinite;
     }
-    .download-icon.pdf {
-      background: linear-gradient(135deg, rgba(233,69,96,0.15), rgba(233,69,96,0.05));
-      border: 2px solid rgba(233,69,96,0.3);
-      animation: pulse-red 2s infinite;
-    }
     @keyframes pulse-green {
       0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.3); }
       70%  { box-shadow: 0 0 0 12px rgba(16,185,129,0); }
       100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
-    }
-    @keyframes pulse-red {
-      0%   { box-shadow: 0 0 0 0 rgba(233,69,96,0.3); }
-      70%  { box-shadow: 0 0 0 12px rgba(233,69,96,0); }
-      100% { box-shadow: 0 0 0 0 rgba(233,69,96,0); }
     }
     .download-card h2 {
       font-size: 1.1rem;
@@ -122,7 +106,6 @@
       transition: width 0.4s ease;
     }
     .dl-progress-fill.video { background: linear-gradient(90deg, var(--success), #34d399); }
-    .dl-progress-fill.pdf   { background: linear-gradient(90deg, var(--accent), #f87171); }
 
     .dl-status {
       font-size: 0.78rem;
@@ -131,7 +114,6 @@
       min-height: 18px;
     }
     .dl-status strong { color: var(--success); }
-    .dl-status.pdf-status strong { color: var(--accent); }
 
     /* ── STATUS BADGE ── */
     .status-badge {
@@ -148,20 +130,10 @@
       color: var(--success);
       border: 1px solid rgba(16,185,129,0.3);
     }
-    .status-badge.downloading-red {
-      background: rgba(233,69,96,0.1);
-      color: var(--accent);
-      border: 1px solid rgba(233,69,96,0.3);
-    }
     .status-badge.done-green {
       background: rgba(16,185,129,0.15);
       color: var(--success);
       border: 1px solid rgba(16,185,129,0.4);
-    }
-    .status-badge.done-red {
-      background: rgba(233,69,96,0.1);
-      color: var(--accent);
-      border: 1px solid rgba(233,69,96,0.3);
     }
     .spinner {
       width: 12px; height: 12px;
@@ -170,7 +142,6 @@
       flex-shrink: 0;
     }
     .spinner.green { border: 2px solid rgba(16,185,129,0.3); border-top-color: var(--success); }
-    .spinner.red   { border: 2px solid rgba(233,69,96,0.3);  border-top-color: var(--accent); }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── NOTICE CARD ── */
@@ -237,8 +208,7 @@
     @media (max-width: 768px) {
       .topbar        { padding: 12px 16px; }
       .page-wrap     { padding: 32px 16px 60px; }
-      .download-grid { grid-template-columns: 1fr; gap: 16px; }
-      .download-card { padding: 28px 20px; }
+      .download-card { padding: 28px 20px; max-width: 100%; }
       .notice-card   { padding: 26px 20px; }
     }
     @media (max-width: 480px) {
@@ -256,39 +226,19 @@
 
 <div class="page-wrap">
 
-  <!-- DOWNLOAD CARDS -->
-  <div class="download-grid">
-
-    <!-- VIDEO -->
-    <div class="download-card">
-      <div class="download-icon video">🎬</div>
-      <h2>Guide Video</h2>
-      <p class="sub">Your exclusive assessment guide video is downloading automatically.</p>
-      <div class="dl-progress-wrap">
-        <div class="dl-progress-fill video" id="videoProgressFill"></div>
-      </div>
-      <div class="dl-status" id="videoStatus">Starting download...</div>
-      <div class="status-badge downloading-green" id="videoBadge">
-        <div class="spinner green" id="videoSpinner"></div>
-        <span id="videoStatusText">Downloading...</span>
-      </div>
+  <!-- VIDEO DOWNLOAD CARD -->
+  <div class="download-card">
+    <div class="download-icon video">🎬</div>
+    <h2>Guide Video</h2>
+    <p class="sub">Your exclusive assessment guide video is downloading automatically.</p>
+    <div class="dl-progress-wrap">
+      <div class="dl-progress-fill video" id="videoProgressFill"></div>
     </div>
-
-    <!-- PDF -->
-    <div class="download-card">
-      <div class="download-icon pdf">📄</div>
-      <h2>Guide Document</h2>
-      <p class="sub">Your exclusive assessment guide PDF is downloading automatically.</p>
-      <div class="dl-progress-wrap">
-        <div class="dl-progress-fill pdf" id="pdfProgressFill"></div>
-      </div>
-      <div class="dl-status pdf-status" id="pdfStatus">Starting download...</div>
-      <div class="status-badge downloading-red" id="pdfBadge">
-        <div class="spinner red" id="pdfSpinner"></div>
-        <span id="pdfStatusText">Downloading...</span>
-      </div>
+    <div class="dl-status" id="videoStatus">Starting download...</div>
+    <div class="status-badge downloading-green" id="videoBadge">
+      <div class="spinner green" id="videoSpinner"></div>
+      <span id="videoStatusText">Downloading...</span>
     </div>
-
   </div>
 
   <!-- IMPORTANT NOTICE -->
@@ -300,7 +250,7 @@
     <div class="notice-body">
       <p>This video has been provided to you exclusively because you have purchased and hold the rights to access this material.</p>
       <p><strong>Please do not share this video with others.</strong></p>
-      <p>Sharing this content — whether the video file, this document, or any portion of its contents — could seriously jeopardize the integrity of assessments used by companies and worsen how evaluations are conducted in the future. Unauthorized distribution undermines the fairness of the process for all candidates.</p>
+      <p>Sharing this content — whether the video file or any portion of its contents — could seriously jeopardize the integrity of assessments used by companies and worsen how evaluations are conducted in the future. Unauthorized distribution undermines the fairness of the process for all candidates.</p>
       <p>By accessing this material, you agree to keep it strictly confidential and for your personal use only.</p>
     </div>
     <div class="notice-agree">
@@ -374,38 +324,16 @@
         { at: 100, msg: '<strong>Video download complete!</strong>' },
       ];
 
-      const pdfMessages = [
-        { at: 0,   msg: 'Connecting to server...' },
-        { at: 20,  msg: 'Preparing PDF document...' },
-        { at: 45,  msg: 'Downloading PDF...' },
-        { at: 70,  msg: 'Almost there...' },
-        { at: 90,  msg: 'Finalising document...' },
-        { at: 100, msg: '<strong>PDF download complete!</strong>' },
-      ];
-
       // ── Trigger video download ──
       setTimeout(() => {
         triggerDownload('practice.mp4', 'LEVI_Assessment_Guide.mp4');
       }, 800);
-
-      // ── Trigger PDF download (slight delay after video) ──
-      setTimeout(() => {
-        triggerDownload('Assessment.pdf', 'LEVI_Assessment_Guide.pdf');
-      }, 1800);
 
       // ── Animate video progress ──
       animateProgress('videoProgressFill', 'videoStatus', videoMessages, () => {
         markDone('videoBadge', 'videoSpinner', 'videoStatusText',
           'done-green', '✅ Video saved — check your downloads folder');
       });
-
-      // ── Animate PDF progress (starts slightly later) ──
-      setTimeout(() => {
-        animateProgress('pdfProgressFill', 'pdfStatus', pdfMessages, () => {
-          markDone('pdfBadge', 'pdfSpinner', 'pdfStatusText',
-            'done-red', '✅ PDF saved — check your downloads folder');
-        });
-      }, 1000);
 
     });
   }

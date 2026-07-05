@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Assessment Mastery Guide — L.A.S.T</title>
+  <title>Choose Your Path — L.A.S.T</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
   <link rel="stylesheet" href="index.css">
   <style>
@@ -19,81 +19,48 @@
     .back-link:hover{color:#fff}
 
     /* HERO */
-    .book-hero{background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%);padding:80px 24px 70px;text-align:center;position:relative;overflow:hidden}
-    .book-hero::before{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(245,166,35,0.12) 0%,transparent 70%);top:-100px;right:-100px;border-radius:50%}
-    .book-hero::after{content:'';position:absolute;width:350px;height:350px;background:radial-gradient(circle,rgba(233,69,96,0.1) 0%,transparent 70%);bottom:-50px;left:-50px;border-radius:50%}
-    .hero-inner{position:relative;z-index:1;max-width:760px;margin:0 auto}
+    .choice-hero{background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%);padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+    .choice-hero::before{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(245,166,35,0.12) 0%,transparent 70%);top:-100px;right:-100px;border-radius:50%}
+    .choice-hero::after{content:'';position:absolute;width:350px;height:350px;background:radial-gradient(circle,rgba(233,69,96,0.1) 0%,transparent 70%);bottom:-50px;left:-50px;border-radius:50%}
+    .hero-inner{position:relative;z-index:1;max-width:680px;margin:0 auto}
     .hero-badge{display:inline-block;background:rgba(245,166,35,0.2);border:1px solid rgba(245,166,35,0.4);color:var(--gold);padding:6px 18px;border-radius:50px;font-size:0.8rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
-    .book-hero h1{font-size:clamp(1.8rem,5vw,3rem);font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px}
-    .book-hero h1 span{color:var(--gold)}
-    .book-hero .sub{color:rgba(255,255,255,0.7);font-size:clamp(0.95rem,2vw,1.1rem);line-height:1.7;margin-bottom:32px;max-width:580px;margin-left:auto;margin-right:auto}
-    .price-tag{display:inline-flex;align-items:center;gap:14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:60px;padding:12px 28px;margin-bottom:36px}
-    .price-old{color:rgba(255,255,255,0.4);font-size:1rem;text-decoration:line-through}
-    .price-new{color:var(--gold);font-size:1.8rem;font-weight:900}
-    .price-label{color:rgba(255,255,255,0.6);font-size:0.82rem}
+    .choice-hero h1{font-size:clamp(1.7rem,4.5vw,2.6rem);font-weight:900;color:#fff;line-height:1.25;margin-bottom:14px}
+    .choice-hero h1 span{color:var(--gold)}
+    .choice-hero .sub{color:rgba(255,255,255,0.7);font-size:clamp(0.9rem,2vw,1.05rem);line-height:1.7;max-width:520px;margin:0 auto}
 
-    /* OPTION CARDS */
-    .option-cards-wrap{display:flex;align-items:stretch;justify-content:center;gap:22px;margin-bottom:28px;flex-wrap:wrap}
-    .option-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:28px 30px;min-width:230px;max-width:260px;text-align:center;display:flex;flex-direction:column;align-items:center}
-    .option-card.option-fast{border-color:rgba(245,166,35,0.45);background:rgba(245,166,35,0.08)}
-    .option-tag{font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:10px}
-    .option-fast .option-tag{color:var(--gold)}
-    .option-card h3{color:#fff;font-size:1.15rem;font-weight:800;margin-bottom:6px}
-    .option-effect{color:rgba(255,255,255,0.65);font-size:0.85rem;font-weight:600;margin-bottom:20px}
-    .option-fast .option-effect{color:var(--gold)}
-    .cta-btn{display:inline-block;background:var(--gold);color:#1a1a2e;text-decoration:none;padding:15px 30px;border-radius:50px;font-size:0.95rem;font-weight:800;transition:all 0.25s;box-shadow:0 8px 30px rgba(245,166,35,0.4);cursor:pointer;border:none;font-family:inherit;width:100%}
-    .cta-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(245,166,35,0.5)}
-    .cta-btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,0.4);box-shadow:none}
-    .cta-btn-outline:hover{background:rgba(255,255,255,0.1);box-shadow:none;transform:translateY(-2px)}
-    .option-divider{display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);font-weight:800;font-size:0.85rem;letter-spacing:1px;padding:0 4px}
+    /* MAIN */
+    .page-wrap{max-width:920px;margin:0 auto;padding:60px 24px 80px}
+    .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
 
-    .hero-trust{display:flex;justify-content:center;gap:24px;margin-top:22px;flex-wrap:wrap}
-    .trust-item{color:rgba(255,255,255,0.55);font-size:0.82rem;display:flex;align-items:center;gap:6px}
+    .choice-card{background:#fff;border-radius:22px;padding:36px 30px;box-shadow:0 8px 40px rgba(0,0,0,0.08);border:1px solid var(--border);display:flex;flex-direction:column}
+    .choice-card.featured{border-color:rgba(245,166,35,0.4);box-shadow:0 12px 44px rgba(245,166,35,0.18)}
 
-    /* WHAT YOU GET */
-    .section{padding:70px 24px;background:#fff}
-    .section-inner{max-width:900px;margin:0 auto}
-    .section-tag{text-align:center;font-size:0.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-    .section h2{text-align:center;font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:900;color:var(--primary);margin-bottom:40px}
-    .chapters-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
-    .chapter-card{background:var(--light);border-radius:16px;padding:24px 22px;border:1px solid var(--border)}
-    .chapter-num{font-size:0.75rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-    .chapter-card h3{font-size:1rem;font-weight:800;color:var(--primary);margin-bottom:8px}
-    .chapter-card p{color:var(--muted);font-size:0.88rem;line-height:1.6}
+    .choice-tag{display:inline-block;padding:6px 16px;border-radius:50px;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:18px;width:fit-content}
+    .choice-tag.gold{background:rgba(245,166,35,0.15);color:var(--gold);border:1px solid rgba(245,166,35,0.35)}
+    .choice-tag.blue{background:rgba(15,52,96,0.08);color:#0f3460;border:1px solid rgba(15,52,96,0.2)}
 
-    /* WHO IT'S FOR */
-    .for-section{padding:70px 24px;background:var(--light)}
-    .for-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;max-width:900px;margin:0 auto}
-    .for-card{background:#fff;border-radius:14px;padding:22px 18px;border:1px solid var(--border);text-align:center}
-    .for-icon{font-size:2rem;margin-bottom:10px}
-    .for-card h3{font-size:0.95rem;font-weight:700;color:var(--primary);margin-bottom:6px}
-    .for-card p{color:var(--muted);font-size:0.85rem;line-height:1.5}
+    .choice-icon{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;margin-bottom:18px}
+    .choice-icon.gold-bg{background:linear-gradient(135deg,rgba(245,166,35,0.15),rgba(245,166,35,0.05))}
+    .choice-icon.blue-bg{background:linear-gradient(135deg,rgba(15,52,96,0.1),rgba(15,52,96,0.03))}
 
-    /* TESTIMONIALS */
-    .testi-section{padding:70px 24px;background:#fff}
-    .testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:900px;margin:0 auto}
-    .testi-card{background:var(--light);border-radius:16px;padding:24px 22px;border:1px solid var(--border)}
-    .testi-stars{color:var(--gold);font-size:1rem;margin-bottom:10px}
-    .testi-text{color:var(--text);font-size:0.9rem;line-height:1.65;margin-bottom:14px;font-style:italic}
-    .testi-name{font-weight:700;color:var(--primary);font-size:0.88rem}
-    .testi-role{color:var(--muted);font-size:0.8rem}
+    .choice-card h2{font-size:1.3rem;font-weight:900;color:var(--primary);margin-bottom:10px}
+    .choice-card p.desc{color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:20px;flex-grow:1}
 
-    /* BOTTOM CTA */
-    .bottom-cta{background:linear-gradient(135deg,#e94560,#c73652);padding:80px 24px;text-align:center}
-    .bottom-cta h2{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;color:#fff;margin-bottom:14px}
-    .bottom-cta p{color:rgba(255,255,255,0.8);font-size:1rem;margin-bottom:32px}
-    .bottom-cta-cards{display:flex;align-items:stretch;justify-content:center;gap:22px;flex-wrap:wrap;margin-bottom:8px}
-    .bottom-cta-cards .option-card{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.25)}
-    .bottom-cta-cards .option-card.option-fast{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.4)}
-    .bottom-cta-cards .option-tag{color:rgba(255,255,255,0.75)}
-    .bottom-cta-cards .option-fast .option-tag{color:#fff}
-    .bottom-cta-cards .option-effect{color:rgba(255,255,255,0.75)}
-    .bottom-cta-cards .option-fast .option-effect{color:#fff}
-    .btn-white{background:#fff;color:var(--accent);border:none;padding:14px 26px;border-radius:50px;font-size:0.95rem;font-weight:800;cursor:pointer;transition:all 0.25s;box-shadow:0 8px 24px rgba(0,0,0,0.2);font-family:inherit;text-decoration:none;display:inline-block;width:100%}
-    .btn-white:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,0,0,0.25)}
-    .btn-white-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,0.5);box-shadow:none}
-    .btn-white-outline:hover{background:rgba(255,255,255,0.15);box-shadow:none}
-    .bottom-cta-divider{display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.7);font-weight:800;font-size:0.85rem;letter-spacing:1px}
+    .choice-list{list-style:none;margin-bottom:24px}
+    .choice-list li{display:flex;align-items:flex-start;gap:8px;font-size:0.85rem;color:var(--text);padding:6px 0}
+    .choice-list li::before{content:'✓';color:var(--success);font-weight:800;flex-shrink:0}
+
+    .choice-btn{display:block;text-align:center;text-decoration:none;padding:16px 24px;border-radius:50px;font-size:0.98rem;font-weight:800;transition:all 0.25s;cursor:pointer;border:none;font-family:inherit}
+    .choice-btn.gold{background:var(--gold);color:#1a1a2e;box-shadow:0 8px 28px rgba(245,166,35,0.4)}
+    .choice-btn.gold:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(245,166,35,0.5)}
+    .choice-btn.outline{background:transparent;color:#0f3460;border:2px solid rgba(15,52,96,0.3)}
+    .choice-btn.outline:hover{background:rgba(15,52,96,0.06);transform:translateY(-2px)}
+
+    .divider-row{display:flex;align-items:center;gap:14px;margin:36px 0;color:var(--muted);font-weight:700;font-size:0.82rem;letter-spacing:1px}
+    .divider-row::before,.divider-row::after{content:'';flex:1;height:1px;background:var(--border)}
+
+    .trust-strip{display:flex;justify-content:center;gap:22px;margin-top:36px;flex-wrap:wrap}
+    .trust-item{color:var(--muted);font-size:0.82rem;display:flex;align-items:center;gap:6px}
 
     /* FOOTER */
     footer{background:#0d0d1a;color:rgba(255,255,255,0.4);text-align:center;padding:22px 20px;font-size:0.82rem}
@@ -102,25 +69,12 @@
     footer span{color:var(--accent)}
     .footer-links{margin-bottom:8px}
 
-    /* GUARANTEE */
-    .guarantee{display:inline-flex;align-items:center;gap:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:12px 20px;margin-bottom:8px}
-    .guarantee span{color:var(--success);font-size:0.88rem;font-weight:600}
-
     @media(max-width:768px){
       .topbar{padding:12px 16px}
-      .book-hero{padding:60px 16px 50px}
-      .price-tag{flex-direction:column;gap:6px;padding:14px 20px}
-      .price-new{font-size:1.5rem}
-      .option-cards-wrap{flex-direction:column;align-items:center}
-      .option-card{max-width:280px;width:100%}
-      .option-divider{padding:4px 0}
-      .section{padding:50px 16px}
-      .for-section{padding:50px 16px}
-      .testi-section{padding:50px 16px}
-      .bottom-cta{padding:60px 16px}
-      .bottom-cta-cards{flex-direction:column;align-items:center}
-      .bottom-cta-cards .option-card{max-width:280px;width:100%}
-      .hero-trust{gap:14px}
+      .choice-hero{padding:56px 16px 44px}
+      .page-wrap{padding:44px 16px 60px}
+      .choice-grid{grid-template-columns:1fr;gap:20px}
+      .choice-card{padding:28px 22px}
     }
   </style>
 </head>
@@ -132,175 +86,57 @@
 </div>
 
 <!-- HERO -->
-<section class="book-hero">
+<section class="choice-hero">
   <div class="hero-inner">
-    <div class="hero-badge">📘 Assessment Mastery Guide</div>
-    <h1>Pass Every Assessment<br/><span>Swiftly & Confidently</span></h1>
-    <p class="sub">The complete playbook used by high scorers — covering speed techniques, pattern recognition, elimination strategies, and a proven study plan that gets results fast.</p>
-
-    <div class="price-tag">
-      <span class="price-old">₦15,000</span>
-      <span class="price-new">₦10,000</span>
-      <span class="price-label">One-time payment · Instant access</span>
-    </div>
-
-    <div class="option-cards-wrap">
-
-      <div class="option-card option-fast">
-        <div class="option-tag">🚀 Recommended</div>
-        <h3>Fastest Means</h3>
-        <p class="option-effect">100% Effective</p>
-        <a href="https://paystack.shop/pay/pts" class="cta-btn">Get the video →</a>
-      </div>
-
-      <div class="option-divider">OR</div>
-
-      <div class="option-card option-standard">
-        <div class="option-tag">🐢 Slower Route</div>
-        <h3>Standard Means</h3>
-        <p class="option-effect">50% Effective</p>
-        <a href="standard.html" class="cta-btn cta-btn-outline">Get the file →</a>
-      </div>
-
-    </div>
-
-    <div class="guarantee">
-      <span>✅ Digital guide · Instant delivery · One-time payment</span>
-    </div>
-
-    <div class="hero-trust">
-      <span class="trust-item">⭐ Trusted by 500+ applicants</span>
-      <span class="trust-item">🔒 Secure payment</span>
-      <span class="trust-item">📲 Works on any device</span>
-    </div>
+    <div class="hero-badge">🎯 Choose Your Path</div>
+    <h1>Two Ways to Prepare.<br/><span>You Decide How.</span></h1>
+    <p class="sub">Watch the exact video breakdown high scorers use to ace assessments fast, or head straight to the platform and practice under real exam conditions — the choice is yours.</p>
   </div>
 </section>
 
-<!-- WHAT'S INSIDE -->
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">What's Inside</div>
-    <h2>Everything You Need to Score Higher</h2>
-    <div class="chapters-grid">
-      <div class="chapter-card">
-        <div class="chapter-num">Chapter 1</div>
-        <h3>⚡ Speed Without Sacrifice</h3>
-        <p>Learn how to read questions faster, identify what's being asked in seconds, and move through a 50-question test without running out of time.</p>
-      </div>
-      <div class="chapter-card">
-        <div class="chapter-num">Chapter 2</div>
-        <h3>🎯 Pattern Recognition</h3>
-        <p>Assessments reuse patterns. Learn to spot them — numerical sequences, word problems, logical reasoning — so questions feel familiar before you even start.</p>
-      </div>
-      <div class="chapter-card">
-        <div class="chapter-num">Chapter 3</div>
-        <h3>🔍 The Elimination Method</h3>
-        <p>When you're unsure, don't guess blindly. This chapter teaches you how to eliminate wrong answers systematically and boost your odds to 50% or higher every time.</p>
-      </div>
-      <div class="chapter-card">
-        <div class="chapter-num">Chapter 4</div>
-        <h3>⏱ Time Management Tactics</h3>
-        <p>How to divide your time across sections, when to skip and come back, and how to manage exam anxiety so the clock works for you, not against you.</p>
-      </div>
-      <div class="chapter-card">
-        <div class="chapter-num">Chapter 5</div>
-        <h3>🧮 Numerical Reasoning Fast-Track</h3>
-        <p>Shortcuts and mental math tricks for percentages, ratios, averages, and sequences — the exact question types that appear in Nigerian aptitude tests most often.</p>
-      </div>
-      <div class="chapter-card">
-        <div class="chapter-num">Chapter 6</div>
-        <h3>📈 The 7-Day Study Plan</h3>
-        <p>A day-by-day action plan to go from unprepared to confident in one week. Includes what to practice each day, how long, and what to review the night before.</p>
-      </div>
-    </div>
-  </div>
-</section>
+<div class="page-wrap">
 
-<!-- WHO IT'S FOR -->
-<section class="for-section">
-  <div class="section-inner">
-    <div class="section-tag" style="text-align:center">Who This Is For</div>
-    <h2 style="text-align:center;font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:900;color:var(--primary);margin-bottom:30px">Built for Every Nigerian Applicant</h2>
-    <div class="for-grid">
-      <div class="for-card">
-        <div class="for-icon">🎓</div>
-        <h3>Fresh Graduates</h3>
-        <p>Just entering the job market and facing your first assessments. Start strong with the right preparation.</p>
-      </div>
-      <div class="for-card">
-        <div class="for-icon">💼</div>
-        <h3>Experienced Professionals</h3>
-        <p>Switching jobs or applying to bigger firms with tougher screening tests. Sharpen your edge.</p>
-      </div>
-      <div class="for-card">
-        <div class="for-icon">🏦</div>
-        <h3>Banking & Finance Applicants</h3>
-        <p>Targeting GTB, Access, Zenith, or any institution known for rigorous numerical assessments.</p>
-      </div>
-      <div class="for-card">
-        <div class="for-icon">🏢</div>
-        <h3>FMCG & Corporate Roles</h3>
-        <p>Applying to Unilever, P&G, Nestlé, or similar companies that use psychometric and aptitude tests.</p>
-      </div>
-    </div>
-  </div>
-</section>
+  <div class="choice-grid">
 
-<!-- TESTIMONIALS -->
-<section class="testi-section">
-  <div class="section-inner">
-    <div class="section-tag" style="text-align:center">What People Say</div>
-    <h2 style="text-align:center;font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:900;color:var(--primary);margin-bottom:30px">Real Results from Real Applicants</h2>
-    <div class="testi-grid">
-      <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"I failed two bank assessments before I found this guide. The elimination method alone changed everything. Got my GTB offer two weeks after reading it."</p>
-        <div class="testi-name">Chukwuemeka O.</div>
-        <div class="testi-role">Graduate Trainee, GTBank</div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"The 7-day plan is incredibly practical. I didn't have weeks to prepare — just one week before the test. Followed it exactly and scored in the top 10%."</p>
-        <div class="testi-name">Adaeze M.</div>
-        <div class="testi-role">Operations Analyst, FMCG Company</div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">"The speed techniques for numerical reasoning are gold. I used to run out of time on every test. Now I finish with minutes to spare and check my answers."</p>
-        <div class="testi-name">Babatunde F.</div>
-        <div class="testi-role">Financial Analyst, Lagos</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- BOTTOM CTA -->
-<section class="bottom-cta">
-  <h2>Your Next Assessment Is Coming.<br/>Be Ready for It.</h2>
-  <p>Don't leave your career to chance. Get the guide, follow the plan, and walk in with confidence.</p>
-
-  <div class="bottom-cta-cards">
-    <div class="option-card option-fast">
-      <div class="option-tag">🚀 Recommended</div>
-      <h3>Fastest Means</h3>
-      <p class="option-effect">100% Effective</p>
-      <a href="pay.html" class="btn-white">Get Fastest Means →</a>
+    <!-- OPTION 1: VIDEO / PAYMENT -->
+    <div class="choice-card featured">
+      <div class="choice-tag gold">🚀 Fastest Means</div>
+      <div class="choice-icon gold-bg">🎬</div>
+      <h2>Get the Ace-It Video Guide</h2>
+      <p class="desc">A one-time payment unlocks a focused video walkthrough showing you exactly how to move through any assessment quickly and pick the right answers with confidence.</p>
+      <ul class="choice-list">
+        <li>Step-by-step video breakdown</li>
+        <li>Speed & elimination techniques</li>
+        <li>Instant access after payment</li>
+      </ul>
+      <a href="https://paystack.shop/pay/pts" class="choice-btn gold">Get the Video — One-Time Payment</a>
     </div>
 
-    <div class="bottom-cta-divider">OR</div>
-
-    <div class="option-card option-standard">
-      <div class="option-tag">🐢 Slower Route</div>
-      <h3>Standard Means</h3>
-      <p class="option-effect">50% Effective</p>
-      <a href="pay.html" class="btn-white btn-white-outline">Get Standard Means →</a>
+    <!-- OPTION 2: PLATFORM PRACTICE -->
+    <div class="choice-card">
+      <div class="choice-tag blue">🖥 Practice Route</div>
+      <div class="choice-icon blue-bg">🧪</div>
+      <h2>Simulate Real Exam Conditions</h2>
+      <p class="desc">Prefer to learn by doing? Use the platform to practice under timed, realistic assessment conditions and build your speed and accuracy on your own pace.</p>
+      <ul class="choice-list">
+        <li>Timed practice sessions</li>
+        <li>Realistic question formats</li>
+        <li>Free to start</li>
+      </ul>
+      <a href="index.html" class="choice-btn outline">Go to Platform</a>
     </div>
+
   </div>
 
-  <div style="margin-top:16px">
-    <span style="color:rgba(255,255,255,0.6);font-size:0.85rem">⚡ Instant access after payment · Works on mobile & desktop</span>
+  <div class="divider-row">EITHER WAY, YOU'RE ONE STEP CLOSER</div>
+
+  <div class="trust-strip">
+    <span class="trust-item">⭐ Trusted by 500+ applicants</span>
+    <span class="trust-item">🔒 Secure payment</span>
+    <span class="trust-item">📲 Works on any device</span>
   </div>
-</section>
+
+</div>
 
 <footer>
   <div class="footer-links">
@@ -310,45 +146,6 @@
   </div>
   <p>© 2025 <span>L.A.S.T</span> — All rights reserved.</p>
 </footer>
-
-<script>
-  const INACTIVITY_LIMIT = 30 * 60 * 1000;
-  let inactivityTimer = null;
-
-  function resetInactivityTimer() {
-    clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(() => {
-      localStorage.removeItem('pt_current_user');
-      document.getElementById('profileChip').style.display = 'none';
-    }, INACTIVITY_LIMIT);
-  }
-
-  function startInactivityWatcher() {
-    ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click']
-      .forEach(evt => document.addEventListener(evt, resetInactivityTimer));
-    resetInactivityTimer();
-  }
-
-  function checkSession() {
-    const email = localStorage.getItem('pt_current_user');
-    const chip  = document.getElementById('profileChip');
-    if (email) {
-      chip.style.display = 'flex';
-      document.getElementById('profileEmail').textContent = email;
-      startInactivityWatcher();
-    } else {
-      chip.style.display = 'none';
-    }
-  }
-
-  function logout() {
-    clearTimeout(inactivityTimer);
-    localStorage.removeItem('pt_current_user');
-    window.location.href = 'index.html';
-  }
-
-  document.addEventListener('DOMContentLoaded', checkSession);
-</script>
 
 <!-- COOKIE CONSENT BANNER -->
 <div class="cookie-banner" id="cookieBanner">
@@ -363,4 +160,4 @@
 </div>
 <script src="index.js"></script>
 </body>
-  </html>
+</html>

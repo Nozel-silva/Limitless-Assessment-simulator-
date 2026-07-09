@@ -144,6 +144,22 @@
     .spinner.green { border: 2px solid rgba(16,185,129,0.3); border-top-color: var(--success); }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ── MANUAL DOWNLOAD BUTTON ── */
+    .manual-download-btn {
+      margin-top: 16px;
+      width: 100%;
+      padding: 12px 20px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .manual-download-btn:hover { background: #2a2a4a; }
+
     /* ── NOTICE CARD ── */
     .notice-card {
       background: #fff;
@@ -239,6 +255,11 @@
       <div class="spinner green" id="videoSpinner"></div>
       <span id="videoStatusText">Downloading...</span>
     </div>
+
+    <button id="manualDownloadBtn" class="manual-download-btn"
+      onclick="triggerDownload('practice.mp4', 'LEVI_Assessment_Guide.mp4')">
+      ⬇️ Download Video Manually
+    </button>
   </div>
 
   <!-- IMPORTANT NOTICE -->
@@ -265,9 +286,21 @@
 </footer>
 
 <script>
-  // ── Check referrer ──
-  function isFromPayPage() {
-    return document.referrer.includes('https://paystack.shop/pay/pts');
+  const ACCESS_KEY = 'last_paystack_access';
+
+  // ── Check referrer OR existing session flag ──
+  // Referrer only works on the very first landing from Paystack.
+  // Once granted, we store a session flag so reloads within the
+  // same browser tab session keep working without redirecting.
+  function hasValidAccess() {
+    const fromReferrer = document.referrer.includes('https://paystack.shop/pay/pts');
+    const fromSession   = sessionStorage.getItem(ACCESS_KEY) === 'true';
+
+    if (fromReferrer) {
+      sessionStorage.setItem(ACCESS_KEY, 'true');
+      return true;
+    }
+    return fromSession;
   }
 
   // ── Animate progress bar ──
@@ -310,7 +343,7 @@
   }
 
   // ── Main logic ──
-  if (!isFromPayPage()) {
+  if (!hasValidAccess()) {
     window.location.href = 'https://paystack.shop/pay/pts';
   } else {
     window.addEventListener('DOMContentLoaded', () => {
@@ -324,7 +357,7 @@
         { at: 100, msg: '<strong>Video download complete!</strong>' },
       ];
 
-      // ── Trigger video download ──
+      // ── Trigger automatic video download ──
       setTimeout(() => {
         triggerDownload('practice.mp4', 'LEVI_Assessment_Guide.mp4');
       }, 800);

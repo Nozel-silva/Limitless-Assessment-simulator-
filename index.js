@@ -151,14 +151,14 @@ async function handleAuth() {
 
 // ── Cookie consent ──
 function initCookieBanner() {
-  const accepted = localStorage.getItem('pt_cookies_accepted');
+  const accepted = localStorage.getItem('pi_cookies_accepted');
   if (!accepted) {
     document.getElementById('cookieBanner').style.display = 'flex';
   }
 }
 
 function acceptCookies() {
-  localStorage.setItem('pt_cookies_accepted', 'true');
+  localStorage.setItem('pi_cookies_accepted', 'true');
   document.getElementById('cookieBanner').classList.add('hidden');
 }
 

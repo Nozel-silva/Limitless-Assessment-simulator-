@@ -19,7 +19,7 @@
     .back-link:hover{color:#fff}
 
 /*banner*/
-.ad-banner-link{
+    .ad-banner-link{
   display:block;
   text-decoration:none;
 }
@@ -27,10 +27,10 @@
 .ad-banner{
   position:relative;
   width:100%;
-  height:100px;
+  height:80px;
   overflow:hidden;
   background:var(--light);
-  border-bottom:1px solid var(--border);
+  border:1px solid var(--border);
 }
 
 .ad-banner-img{
@@ -38,11 +38,42 @@
   height:100%;
   object-fit:cover;
   display:block;
+  animation:adPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes adPulse{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.04); }
+}
+
+/* shine sweep overlay */
+.ad-banner::after{
+  content:'';
+  position:absolute;
+  top:0;
+  left:-150%;
+  width:60%;
+  height:100%;
+  background:linear-gradient(
+    120deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.35) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  transform:skewX(-20deg);
+  animation:adShine 3.5s ease-in-out infinite;
+  pointer-events:none;
+}
+
+@keyframes adShine{
+  0%{ left:-150%; }
+  50%{ left:150%; }
+  100%{ left:150%; }
 }
 
 .ad-label{
   position:absolute;
-  top:10px;
+  top:4px;
   left:8px;
   background:rgba(26,26,46,0.75);
   color:#fff;

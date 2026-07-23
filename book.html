@@ -6,155 +6,16 @@
   <title>Choose Your Path to L.A.S.T</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
   <link rel="stylesheet" href="index.css">
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    :root{--primary:#1a1a2e;--accent:#e94560;--gold:#f5a623;--text:#2d2d2d;--muted:#6b7280;--border:#e5e7eb;--light:#f0f4ff;--success:#10b981}
-    body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f8fc;color:var(--text);min-height:100vh}
-
-    /* TOPBAR */
-    .topbar{background:var(--primary);padding:14px 40px;display:flex;justify-content:space-between;align-items:center}
-    .logo{font-size:1.3rem;font-weight:800;color:#fff}
-    .logo span{color:var(--accent)}
-    .back-link{color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.88rem;transition:color 0.2s}
-    .back-link:hover{color:#fff}
-
-/*banner*/
-    .ad-banner-link{
-  display:block;
-  text-decoration:none;
-}
-
-.ad-banner{
-  position:relative;
-  width:100%;
-  height:95px;
-  overflow:hidden;
-  background:var(--light);
-  border:1px solid var(--border);
-}
-
-.ad-banner-img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-  animation:adPulse 2.5s ease-in-out infinite;
-}
-
-@keyframes adPulse{
-  0%,100%{ transform:scale(1); }
-  50%{ transform:scale(1.04); }
-}
-
-/* shine sweep overlay */
-.ad-banner::after{
-  content:'';
-  position:absolute;
-  top:0;
-  left:-150%;
-  width:60%;
-  height:100%;
-  background:linear-gradient(
-    120deg,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0.35) 50%,
-    rgba(255,255,255,0) 100%
-  );
-  transform:skewX(-20deg);
-  animation:adShine 3.5s ease-in-out infinite;
-  pointer-events:none;
-}
-
-@keyframes adShine{
-  0%{ left:-150%; }
-  50%{ left:150%; }
-  100%{ left:150%; }
-}
-
-.ad-label{
-  position:absolute;
-  top:4px;
-  left:8px;
-  background:rgba(26,26,46,0.75);
-  color:#fff;
-  font-size:0.65rem;
-  font-weight:700;
-  letter-spacing:0.5px;
-  padding:2px 8px;
-  border-radius:4px;
-  z-index:2;
-  text-transform:uppercase;
-}
-
-    
-    /* HERO */
-    .choice-hero{background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%);padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
-    .choice-hero::before{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(245,166,35,0.12) 0%,transparent 70%);top:-100px;right:-100px;border-radius:50%}
-    .choice-hero::after{content:'';position:absolute;width:350px;height:350px;background:radial-gradient(circle,rgba(233,69,96,0.1) 0%,transparent 70%);bottom:-50px;left:-50px;border-radius:50%}
-    .hero-inner{position:relative;z-index:1;max-width:680px;margin:0 auto}
-    .hero-badge{display:inline-block;background:rgba(245,166,35,0.2);border:1px solid rgba(245,166,35,0.4);color:var(--gold);padding:6px 18px;border-radius:50px;font-size:0.8rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
-    .choice-hero h1{font-size:clamp(1.7rem,4.5vw,2.6rem);font-weight:900;color:#fff;line-height:1.25;margin-bottom:14px}
-    .choice-hero h1 span{color:var(--gold)}
-    .choice-hero .sub{color:rgba(255,255,255,0.7);font-size:clamp(0.9rem,2vw,1.05rem);line-height:1.7;max-width:520px;margin:0 auto}
-
-    /* MAIN */
-    .page-wrap{max-width:920px;margin:0 auto;padding:60px 24px 80px}
-    .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
-
-    .choice-card{background:#fff;border-radius:22px;padding:36px 30px;box-shadow:0 8px 40px rgba(0,0,0,0.08);border:1px solid var(--border);display:flex;flex-direction:column}
-    .choice-card.featured{border-color:rgba(245,166,35,0.4);box-shadow:0 12px 44px rgba(245,166,35,0.18)}
-
-    .choice-tag{display:inline-block;padding:6px 16px;border-radius:50px;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:18px;width:fit-content}
-    .choice-tag.gold{background:rgba(245,166,35,0.15);color:var(--gold);border:1px solid rgba(245,166,35,0.35)}
-    .choice-tag.blue{background:rgba(15,52,96,0.08);color:#0f3460;border:1px solid rgba(15,52,96,0.2)}
-
-    .choice-icon{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;margin-bottom:18px}
-    .choice-icon.gold-bg{background:linear-gradient(135deg,rgba(245,166,35,0.15),rgba(245,166,35,0.05))}
-    .choice-icon.blue-bg{background:linear-gradient(135deg,rgba(15,52,96,0.1),rgba(15,52,96,0.03))}
-
-    .choice-card h2{font-size:1.3rem;font-weight:900;color:var(--primary);margin-bottom:10px}
-    .choice-card p.desc{color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:20px;flex-grow:1}
-
-    .choice-list{list-style:none;margin-bottom:24px}
-    .choice-list li{display:flex;align-items:flex-start;gap:8px;font-size:0.85rem;color:var(--text);padding:6px 0}
-    .choice-list li::before{content:'✓';color:var(--success);font-weight:800;flex-shrink:0}
-
-    .choice-btn{display:block;text-align:center;text-decoration:none;padding:16px 24px;border-radius:50px;font-size:0.98rem;font-weight:800;transition:all 0.25s;cursor:pointer;border:none;font-family:inherit}
-    .choice-btn.gold{background:var(--gold);color:#1a1a2e;box-shadow:0 8px 28px rgba(245,166,35,0.4)}
-    .choice-btn.gold:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(245,166,35,0.5)}
-    .choice-btn.outline{background:transparent;color:#0f3460;border:2px solid rgba(15,52,96,0.3)}
-    .choice-btn.outline:hover{background:rgba(15,52,96,0.06);transform:translateY(-2px)}
-
-    .divider-row{display:flex;align-items:center;gap:14px;margin:36px 0;color:var(--muted);font-weight:700;font-size:0.82rem;letter-spacing:1px}
-    .divider-row::before,.divider-row::after{content:'';flex:1;height:1px;background:var(--border)}
-
-    .trust-strip{display:flex;justify-content:center;gap:22px;margin-top:36px;flex-wrap:wrap}
-    .trust-item{color:var(--muted);font-size:0.82rem;display:flex;align-items:center;gap:6px}
-
-    /* FOOTER */
-    footer{background:#0d0d1a;color:rgba(255,255,255,0.4);text-align:center;padding:22px 20px;font-size:0.82rem}
-    footer a{color:rgba(255,255,255,0.4);text-decoration:none;margin:0 8px}
-    footer a:hover{color:var(--accent)}
-    footer span{color:var(--accent)}
-    .footer-links{margin-bottom:8px}
-
-    @media(max-width:768px){
-      .topbar{padding:12px 16px}
-      .choice-hero{padding:56px 16px 44px}
-      .page-wrap{padding:44px 16px 60px}
-      .choice-grid{grid-template-columns:1fr;gap:20px}
-      .choice-card{padding:28px 22px}
-    }
-  </style>
+  <link rel="stylesheet" href="book.css">
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-00F5PXBT46"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-00F5PXBT46"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  gtag('config', 'G-00F5PXBT46');
-</script>
+    gtag('config', 'G-00F5PXBT46');
+  </script>
 </head>
 <body>
 
@@ -164,7 +25,7 @@
 </div>
 
 <!-- AD BANNER -->
-<a href=" https://all-for-one-pearl.vercel.app/#platforms" target="_blank" rel="noopener" class="ad-banner-link">
+<a href="https://all-for-one-pearl.vercel.app/#platforms" target="_blank" rel="noopener" class="ad-banner-link">
   <div class="ad-banner">
     <span class="ad-label">Ad</span>
     <img src="banner1.png" alt="Advertisement" class="ad-banner-img"/>
@@ -176,9 +37,9 @@
   <div class="hero-inner">
     <div class="hero-badge">🎯 You Are Here!</div>
     <h1>Decide your outcome.<br/><span> </span></h1>
-    <p class="sub"> You could take tests and fail, Pass and not get called.</p>
-    <p class= "sub">So a video has been made to solve that. </p>
-    <p class = "sub"> If you can afford it, purchase it, watch it, understand it and your problems will be solved.</p>
+    <p class="sub">You could take tests and fail, Pass and not get called.</p>
+    <p class="sub">So a video has been made to solve that.</p>
+    <p class="sub">If you can afford it, purchase it, watch it, understand it and your problems will be solved.</p>
   </div>
 </section>
 
@@ -194,10 +55,10 @@
       <p class="desc">A one-time payment that unlocks a focused video walkthrough showing you exactly how to move through any assessment quickly and pick the right answers with confidence.</p>
       <ul class="choice-list">
         <li>practice the steps in the video</li>
-       <li>Ace assessments faster & better</li>
+        <li>Ace assessments faster & better</li>
         <li>Get yourself your dream Job!</li>
       </ul>
-      <a href="https://paystack.shop/pay/pts" class="choice-btn gold">Get the Video </a>
+      <a href="https://paystack.shop/pay/pts" class="choice-btn gold">Get the Video</a>
     </div>
 
     <!-- OPTION 2: PLATFORM PRACTICE -->
@@ -219,9 +80,9 @@
   <div class="divider-row">EITHER WAY, YOU'RE ONE STEP CLOSER</div>
 
   <div class="trust-strip">
-    <span class="trust-item"> Trusted by 500+ applicants</span>
-    <span class="trust-item"> Secure payment</span>
-    <span class="trust-item"> Works on any device</span>
+    <span class="trust-item">Trusted by 500+ applicants</span>
+    <span class="trust-item">Secure payment</span>
+    <span class="trust-item">Works on any device</span>
   </div>
 
 </div>
@@ -247,8 +108,7 @@
   </div>
 </div>
 
-<script src="book.js">
-</script>
+<script src="book.js"></script>
 
 </body>
 </html>

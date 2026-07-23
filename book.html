@@ -18,6 +18,43 @@
     .back-link{color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.88rem;transition:color 0.2s}
     .back-link:hover{color:#fff}
 
+/*banner*/
+    .ad-banner-link{
+  display:block;
+  text-decoration:none;
+}
+
+.ad-banner{
+  position:relative;
+  width:100%;
+  height:50px;
+  overflow:hidden;
+  background:var(--light);
+  border-bottom:1px solid var(--border);
+}
+
+.ad-banner-img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.ad-label{
+  position:absolute;
+  top:4px;
+  left:8px;
+  background:rgba(26,26,46,0.75);
+  color:#fff;
+  font-size:0.65rem;
+  font-weight:700;
+  letter-spacing:0.5px;
+  padding:2px 8px;
+  border-radius:4px;
+  z-index:2;
+  text-transform:uppercase;
+}
+    
     /* HERO */
     .choice-hero{background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 100%);padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
     .choice-hero::before{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(245,166,35,0.12) 0%,transparent 70%);top:-100px;right:-100px;border-radius:50%}
